@@ -39,6 +39,43 @@ function getWeather() {
 	return '{"err":0, "errmsg":null, "data":{"weather":{"timestamp":' + Math.floor(new Date() / 1000) + ', "cloud":-0.475, "wind_speed":2, "wind_direction":3, "wind_gustiness":0.081, "rain":1, "rain_intensity":0, "fog":0.002, "temp":14, "pressure":763, "date":"' + date + '", "time":"' + dateTime + '"}, "date":"' + date + '", "time":"' + time + '", "acceleration":1}}';			
 }
 
+function loadTraderStandings(trader, profile) {
+	// get profile Data
+	let profileData = profile.getCharacterData();
+	let profileCharData = profileData.data[1]
+	// get trader data and update by profile info
+	let dynTrader;
+	// Check if trader standing data exists
+	if (profileCharData.hasOwnProperty("TraderStandings")) {
+		for (dynTrader of trader.getDynamicTraders()) {
+			let profileStanding = profileCharData.TraderStandings[dynTrader]
+			let traderLoyality = trader.get(dynTrader).data.loyalty;
+
+			traderLoyality.currentLevel = profileStanding.currentLevel;
+			traderLoyality.currentStanding = profileStanding.currentStanding;
+			traderLoyality.currentSalesSum = profileStanding.currentSalesSum;
+
+			// set Loyalty in trader
+			trader.get(dynTrader).data.loyalty = traderLoyality;
+		}
+	} else {
+		profileCharData.TraderStandings = {};
+		// add with default data
+		for (dynTrader of trader.getDynamicTraders()) {
+			let traderLoyality = trader.get(dynTrader).data.loyalty;
+			profileCharData.TraderStandings[dynTrader] =
+				{
+					"currentSalesSum": traderLoyality.currentSalesSum,
+					"currentLevel": traderLoyality.currentLevel,
+					"currentStanding": traderLoyality.currentStanding
+				};
+		}
+		// save profile
+		profileData.data[1] = profileCharData;
+		profile.setCharacterData(profileData);
+	}
+}
+
 function get(req, body) {
 	let output = "";
 	let url = req.url;
@@ -122,7 +159,7 @@ function get(req, body) {
 		case "/client/items":
 			// custom items handling
 			let base = JSON.parse(utility.readJson('data/configs/items.json'));
-			let newI = JSON.parse(utility.readJson('data/configs/items_new.json'));
+			let newI = JSON.parse(utility.readJson('data/configs/items_custom.json'));
 			for(let i of newI){
 				base.data[i._id] = i;
 			}
@@ -135,6 +172,7 @@ function get(req, body) {
 
 		case "/client/game/profile/list":
 			output = JSON.stringify(profile.getCharacterData());
+			loadTraderStandings(trader, profile);
 			break;
 
 		case "/client/game/profile/select":
@@ -166,6 +204,9 @@ function get(req, body) {
 			break;
 
 		case "/client/game/bot/generate":
+			//MAKE SURE TO REMOVE THIS LATER - THEMAOCI
+			if(body == "{}")
+				body = "{\"conditions\":[{\"Role\":\"assault\",\"Limit\":30,\"Difficulty\":\"normal\"},{\"Role\":\"assault\",\"Limit\":30,\"Difficulty\":\"hard\"}]}";
 			output = JSON.stringify( {"err": 0,"errmsg": null,"data": bots.generate(JSON.parse(body)) } );
 			break;
 
@@ -227,10 +268,59 @@ function get(req, body) {
 			break;
 		
 		case "/client/repair/exec":
+		/*	{
+			  "err": 0,
+			  "errmsg": null,
+			  "data": {
+				"items": {
+				  "change": [
+					{
+					  "_id": "5d0778e48ed2394283654566",
+					  "_tpl": "5449016a4bdc2d6f028b456f",
+					  "parentId": "5cacd049f0dd3508b7593561",
+					  "slotId": "hideout",
+					  "location": {
+						"x": 6,
+						"y": 1,
+						"r": 0,
+						"isSearched": true
+					  },
+					  "upd": {
+						"StackObjectsCount": 493176
+					  }
+					},
+					{
+					  "_id": "5d5abef28ed2392c3f3df930",
+					  "_tpl": "5648a7494bdc2d9d488b4583",
+					  "parentId": "5cacd049f0dd3508b7593561",
+					  "slotId": "hideout",
+					  "location": {
+						"x": 7,
+						"y": 6,
+						"r": 0
+					  },
+					  "upd": {
+						"Repairable": {
+						  "MaxDurability": 46.9,
+						  "Durability": 46.9
+						},
+						"StackObjectsCount": 1
+					  }
+					}
+				  ]
+				},
+				"badRequest": [],
+				"currentSalesSums": {
+				  "54cb50c76803fa8b248b4571": 49222779
+				}
+			  }
+			}*/
 			//repair this :) by TheMaoci
-			output = JSON.parse('{"err":0, "errmsg":null, "data":{"items":{"new":[], "change":[], "del":[]}, "badRequest":[], "quests":[], "ragFairOffers":[]}}')
+			output = JSON.parse('{"err":0, "errmsg":null, "data":{"items":{"change":[]}, "badRequest":[], "currentSalesSums": { "54cb50c76803fa8b248b4571": 49222779 }}}')
 			let data = profile.getCharacterData();
 			let count = info.items.length;
+			console.log(info.items);
+			console.log("---------------");
 			let RequestData = info.items;
 			let cnt = 0;
 			for(let inventory in data.data[1].Inventory.items){
@@ -241,6 +331,7 @@ function get(req, body) {
 						if(typeof data.data[1].Inventory.items[inventory].upd.Repairable != "undefined"){
 						let calculateDurability = data.data[1].Inventory.items[inventory].upd.Repairable.Durability + RequestData[item].count;
 						data.data[1].Inventory.items[inventory].upd.Repairable.Durability = calculateDurability;
+						data.data[1].Inventory.items[inventory].upd.Repairable.MaxDurability = calculateDurability;
 						output.data.items.change.push(data.data[1].Inventory.items[inventory]);
 						cnt++;
 						}
@@ -249,7 +340,7 @@ function get(req, body) {
 			if(cnt == count)
 				break;
 			}
-			console.log(output.data.items.change[0].upd.Repairable);
+			console.log(output.data.items.change);
 			profile.setCharacterData(data)
 			break;
 

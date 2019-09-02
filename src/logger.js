@@ -40,7 +40,8 @@ console.log = function(data, colorFront, colorBack) {
 	}
 
 	// write the logged data to the file
-	fileStream.write(util.format(data) + '\n');
+	if(typeof fileStream != "undefined")
+		fileStream.write(util.format(data) + '\n');
 }
 
 function separator() {

@@ -73,6 +73,7 @@ function saveProfileProgress(offRaidData)
 		let currentProfile = profile.getCharacterData();
 		//replace data below
 		currentProfile.data[1].Info.Experience = offRaidProfile.Info.Experience;
+		currentProfile.data[1].Info.Level = offRaidProfile.Info.Level;
 		//currentProfile.data[1].Health = offRaidProfile.Health;
 		currentProfile.data[1].Skills = offRaidProfile.Skills;
 		currentProfile.data[1].Stats.SessionCounters = offRaidProfile.Stats.SessionCounters;
@@ -100,7 +101,23 @@ function saveProfileProgress(offRaidData)
 		string_inventory = string_inventory.replace(new RegExp("GClass800", 'g'), "Togglable");
 		// left to check: SpawnedInSession, Dogtag
 
-		//and then re-parse the string into an object
+		//and then re-parse the string into an object preparing to replace ID fix
+		offRaidProfile.Inventory.items = JSON.parse(string_inventory);
+		
+		// replace bsg shit long ID with proper one
+		for (let recalID in offRaidProfile.Inventory.items)
+		{
+			//do not replace important ID's
+			if(
+				offRaidProfile.Inventory.items[recalID]._id != offRaidProfile.Inventory.equipment && 
+				offRaidProfile.Inventory.items[recalID]._id != offRaidProfile.Inventory.questRaidItems && 
+				offRaidProfile.Inventory.items[recalID]._id != offRaidProfile.Inventory.questStashItems
+			){
+			let old_id = offRaidProfile.Inventory.items[recalID]._id;
+			let new_id = "oRd_" + item.GenItemID();
+			string_inventory = string_inventory.replace(new RegExp(old_id, 'g'), new_id);
+			}
+		}
 		offRaidProfile.Inventory.items = JSON.parse(string_inventory);
 
 		//remove previous equippement & other, KEEP ONLY THE STASH
@@ -108,14 +125,16 @@ function saveProfileProgress(offRaidData)
 		item.removeItem( currentProfile, {Action: 'Remove', item: currentProfile.data[1].Inventory.questRaidItems} );
 		item.removeItem( currentProfile, {Action: 'Remove', item: currentProfile.data[1].Inventory.questStashItems} );
 
+		
+		
 		//and then fill with offline raid equipement
-		for(var inventoryitem in offRaidProfile.Inventory.items)
+		for(let inventoryitem in offRaidProfile.Inventory.items)
 		{
 			currentProfile.data[1].Inventory.items.push(offRaidProfile.Inventory.items[inventoryitem]);
 		}	
-
+		
 		let pocketid = "";
-		var items_to_delete = [];
+		let items_to_delete = [];
 
 		//but if the player get killed, he loose almost everything
 		if(offRaidData.status != "Survived" && offRaidData.status != "Runner")
@@ -163,6 +182,8 @@ function sendResponse(req, resp, body) {
 		return;
 	}
 	let output = "";
+	//fix for images crash 'toString' of null
+	body = ((body !== null && body != "" && body != "{}")?body.toString():"{}");
 	// reset item output
 	item.resetOutput();
 	// get active profile
@@ -170,11 +191,11 @@ function sendResponse(req, resp, body) {
 		profile.setActiveID(getCookies(req)['PHPSESSID']);
 		console.log("[Request]::" + req.url, "cyan");
 		if(settings.dev == true)
-			console.log(body.toString());
+			console.log(body);
 	
 		// get response
 		if (req.method == "POST") {
-			output = response.get(req, body.toString());
+			output = response.get(req, body);
 		} else {
 			output = response.get(req, "{}");
 		}

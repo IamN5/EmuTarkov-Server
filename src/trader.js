@@ -2,6 +2,9 @@
 
 const fs = require('fs');
 const utility = require('./utility.js');
+// List of traders with dynamic standing (maybe move in some config file)
+const dynamicTraders = ["1_prapor", "2_therapist", "3_fence", "4_skier",
+						 "5_peacekeeper", "6_mechanic", "7_ragman"];						 
 
 var tradersDir = "data/configs/traders/";
 var assortDir = "data/configs/assort/";
@@ -69,8 +72,32 @@ function load() {
 	loadAllTraders();
 	loadAllAssorts();
 }
+function getDynamicTraders() {
+	return dynamicTraders;
+}
+function lvlUp(playerLvl) {
+	let lvlUpTraders = [];
+	for (let dynTrader of dynamicTraders) {
+		let traderLoyality = get(dynTrader).data.loyalty;
+		if (traderLoyality.currentLevel < Object.keys(traderLoyality.loyaltyLevels).length) {
+			let newLvl = traderLoyality.currentLevel + 1;
+			if  ((playerLvl >= traderLoyality.loyaltyLevels[newLvl].minLevel) &&
+				 (traderLoyality.currentSalesSum >= traderLoyality.loyaltyLevels[newLvl].minSalesSum) &&
+				 (traderLoyality.currentStanding >= traderLoyality.loyaltyLevels[newLvl].minStanding)) {
+				// lvl up trader
+				traderLoyality.currentLevel += 1;
+				get(dynTrader).data.loyalty = traderLoyality;
+				// add to return value
+				lvlUpTraders.push(dynTrader);
+			}
+		}
+	}
+	return lvlUpTraders;
+}
 
 module.exports.getList = getList;
 module.exports.get = get;
 module.exports.getAssort = getAssort;
 module.exports.load = load;
+module.exports.getDynamicTraders = getDynamicTraders;
+module.exports.lvlUp = lvlUp;

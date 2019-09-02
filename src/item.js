@@ -5,6 +5,7 @@ const profile = require('./profile.js');
 const trader = require('./trader.js');
 
 var items = JSON.parse(utility.readJson('data/configs/items.json'));
+var AllQuests = JSON.parse(utility.readJson('data/configs/questList.json'));
 var stashX = 10; // fix for your stash size
 var stashY = 66; // ^ if you edited it ofc
 var output = "";
@@ -27,8 +28,9 @@ function recheckInventoryFreeSpace(tmpList) {
 			let fH = (item.location.rotation == "Vertical" ? iW : iH);
 			let fW = (item.location.rotation == "Vertical" ? iH : iW);
 			
-			for (let x = 0; x < fH; x++) {
-				Stash2D[item.location.y + x].fill(1, item.location.x, item.location.x + fW);
+			for (let y = 0; y < fH; y++) {
+				if(item.location.y + y <= stashY && item.location.x + fW <= stashX)
+					Stash2D[item.location.y + y].fill(1, item.location.x, item.location.x + fW);
 			}
 		}
 	}
@@ -48,23 +50,55 @@ function getCurrency(currency) {
 			return "5449016a4bdc2d6f028b456f"; // RUB is here // set by default
 	}
 }
+// convert price from RUB
+function inRUB(value, currency) {
+	switch (currency) {
+		case "EUR":
+			return 74*value;
+
+		case "USD":
+			return 66*value;
+
+		default:
+			return value;
+	}
+}
 // take money and insert items into return to server request
-function payMoney(tmpList, moneyObject, body) {
+function payMoney(tmpList, moneyObject, body, trad = "") {
+	
+	let value = 0;
 	for (let item of tmpList.data[1].Inventory.items) {
 		for (let i = 0; i < moneyObject.length; i++){
 			if(typeof item.upd != "undefined")
-				if (item._id == moneyObject[i]._id && item.upd.StackObjectsCount > body[i].count) {
-					item.upd.StackObjectsCount -= body[i].count;
+				if (item._id == moneyObject[i]._id && item.upd.StackObjectsCount > body.scheme_items[i].count) {
+					value += body.scheme_items[i].count;
+					item.upd.StackObjectsCount -= body.scheme_items[i].count;
 					output.data.items.change.push({"_id": item._id, "_tpl": item._tpl, "parentId": item.parentId, "slotId": item.slotId, "location": item.location, "upd": {"StackObjectsCount": item.upd.StackObjectsCount}});
-				} else if (item._id == moneyObject[i]._id && item.upd.StackObjectsCount == body[i].count) {
+				} else if (item._id == moneyObject[i]._id && item.upd.StackObjectsCount == body.scheme_items[i].count) {
+					value += body.scheme_items[i].count;
 					delete tmpList.data[1].Inventory.items[item];
 					output.data.items.del.push({ "_id": item._id });
-				} else if (item._id == moneyObject[i].id && item.upd.StackObjectsCount < body[i].count)
+				} else if (item._id == moneyObject[i].id && item.upd.StackObjectsCount < body.scheme_items[i].count)
 					return false;
 		}
 	}
 	// this script will not override data if something goes wrong aka return false;
-	// if everything goes OK save profile
+	// keep track of trader changing
+	if(trad == ""){
+		let tmpTrader = trader.get(body.tid);
+		let traderCurrency = tmpTrader.data.currency;
+		let traderLoyalty = tmpTrader.data.loyalty;
+		value = inRUB(value, traderCurrency);
+		traderLoyalty.currentSalesSum += value;
+		trader.get(body.tid).data.loyalty = traderLoyalty;
+		let newLvlTraders = trader.lvlUp(tmpList.data[1].Info.Level);
+		for (let lvlUpTrader in newLvlTraders) {
+			tmpList.data[1].TraderStandings[lvlUpTrader].currentLevel = trader.get(lvlUpTrader).data.loyalty.currentLevel;
+		}
+		// if everything goes OK save profile
+		// update trader data also in profile
+		tmpList.data[1].TraderStandings[body.tid].currentSalesSum = traderLoyalty.currentSalesSum;
+	}
 	profile.setCharacterData(tmpList);
 	console.log("Items taken. Status OK.", "white", "green");
 	return true;
@@ -87,6 +121,16 @@ function getMoney(tmpList, amount, body, output) {
 	for (let item of tmpList.data[1].Inventory.items) {
 		if (item._tpl == currency) {
 			item.upd.StackObjectsCount += amount;
+			// Update trader standing
+			let value = inRUB(amount, currency);
+			let traderLoyalty = tmpTraderInfo.data.loyalty;
+			traderLoyalty.currentSalesSum += value;
+			trader.get(body.tid).data.loyalty = traderLoyalty;
+			let newLvlTraders =  trader.lvlUp(tmpList.data[1].Info.Level);
+			for (let lvlUpTrader in newLvlTraders) {
+				tmpList.data[1].TraderStandings[lvlUpTrader].currentLevel = trader.get(lvlUpTrader).data.loyalty.currentLevel;
+			}
+			tmpList.data[1].TraderStandings[body.tid].currentSalesSum = traderLoyalty.currentSalesSum;
 			profile.setCharacterData(tmpList);
 			output.data.items.change.push({"_id": item._id, "_tpl": item._tpl, "parentId": item.parentId, "slotId": item.slotId, "location": item.location, "upd": {"StackObjectsCount": item.upd.StackObjectsCount}});
 			console.log("Money received: " + amount + " " + tmpTraderInfo.data.currency, "white", "green");
@@ -175,8 +219,29 @@ function completeQuest(tmpList, body) {
 	for (let quest of tmpList.data[1].Quests) {
 		if (quest.qid == body.qid) {
 			quest.status = 4;
+			break;
 		}
 	}
+	// find Quest data and update trader loyalty
+	for (let quest of AllQuests.data) {
+		if (quest._id == body.qid) {
+			for (let reward of quest.rewards.Success) {
+				let tmpTraderInfo = trader.get(reward.target);
+				if (tmpTraderInfo.err == 0) {
+					let traderLoyalty = tmpTraderInfo.data.loyalty;
+					traderLoyalty.currentStanding += parseFloat(reward.value);
+					trader.get(reward.target).data.loyalty = traderLoyalty;
+					let newLvlTraders =  trader.lvlUp(tmpList.data[1].Info.Level);
+					for (let lvlUpTrader in newLvlTraders) {
+						tmpList.data[1].TraderStandings[lvlUpTrader].currentLevel = trader.get(lvlUpTrader).data.loyalty.currentLevel;
+					}
+					tmpList.data[1].TraderStandings[reward.target].currentStanding += parseFloat(reward.value);
+				} else if (reward.type == "Experience") { // get Exp reward
+					tmpList.data[1].Info.Experience += parseInt(reward.value);
+				}
+			}
+		}
+  }
 
 	//send reward to the profile : if quest_list.id == bodyqid then quest_list.succes
 
@@ -259,43 +324,50 @@ function moveItem(tmpList, body) {
 
 	return "";
 }
-// -> Deletes item completly
+/* 
+Find And Return Children /// fixed by TRegular
+returns all child items ids in array, includes itself and children 
+List is backward first item is the furthest child and last item is main item 
+*/
+function findandreturnchildren(tmpList,itemid ) {
+	let list = [];
+	for (let childitem of tmpList.data[1].Inventory.items){
+		if (childitem.parentId == itemid){
+			list.push.apply(list,findandreturnchildren(tmpList,childitem._id));
+		}
+	}
+	list.push(itemid);// our item don't remove this to find all child of child of child... it's required
+	return list;
+}
+// -> Deletes item and its all child completly- now properly works
 function removeItem(tmpList, body, ) {
 	var toDo = [body.item];
-
-	while (true) {
-		if (toDo[0] != undefined) {
-			// needed else iterator may decide to jump over stuff
-			while (true) {
-				let tmpEmpty = "yes";
-
-				for (let tmpKey in tmpList.data[1].Inventory.items) {
-					if ((tmpList.data[1].Inventory.items[tmpKey].parentId && tmpList.data[1].Inventory.items[tmpKey].parentId == toDo[0])
-					|| (tmpList.data[1].Inventory.items[tmpKey]._id && tmpList.data[1].Inventory.items[tmpKey]._id == toDo[0])) {
-					
-						output.data.items.del.push({"_id": tmpList.data[1].Inventory.items[tmpKey]._id});
-						toDo.push(tmpList.data[1].Inventory.items[tmpKey]._id);
-						tmpList.data[1].Inventory.items.splice(tmpKey, 1);
-						
-						tmpEmpty = "no";
-					}
-				}
-
-				if (tmpEmpty == "yes") {
-					break;
-				};
-			}
-
-			toDo.splice(0, 1);
-			continue;
-		}
-
-		break;
-	}
 	
-	profile.setCharacterData(tmpList);
-	return "OK";
+	//Find the item and all of it's relates
+	if (toDo[0] != undefined && toDo[0] != null && toDo[0] != "undefined"){
+
+		let ids_toremove = findandreturnchildren(tmpList,toDo[0]); //get all ids related to this item, +including this item itself
+		//console.log("--items to delete--");
+		//console.log(ids_toremove.toString());
+		for(let i in ids_toremove){ //remove one by one all related items and itself
+			output.data.items.del.push({"_id": ids_toremove[i]}); // Tell client to remove this from live game
+			for(let a in tmpList.data[1].Inventory.items){	//find correct item by id and delete it 
+				if(tmpList.data[1].Inventory.items[a]._id==ids_toremove[i]){
+					//console.log("item removed: "+tmpList.data[1].Inventory.items[a]._id.toString());
+					tmpList.data[1].Inventory.items.splice(a, 1);  //remove item from tmplist
+				}
+			}
+			
+		}
+		profile.setCharacterData(tmpList); //save tmplist to profile
+		return "OK";
+	}
+	else{
+		console.log("item id is not vaild");
+		//maybe return something because body.item id wasn't valid.
+	}
 }
+// edit end TRegular
 // -> Spliting item / Create new item with splited amount and removing that amount from older one
 function splitItem(tmpList, body) {
 	let location = body.container.location;
@@ -322,22 +394,34 @@ function splitItem(tmpList, body) {
 }
 // -> Merging to one item / deletes one item and adding its value to second one
 function mergeItem(tmpList, body) {
-	for (let key in tmpList.data[1].Inventory.items) {
-		if (tmpList.data[1].Inventory.items[key]._id && tmpList.data[1].Inventory.items[key]._id == body.with) {
-			for (let key2 in tmpList.data[1].Inventory.items) {
-				if (tmpList.data[1].Inventory.items[key2]._id && tmpList.data[1].Inventory.items[key2]._id == body.item) {
-					tmpList.data[1].Inventory.items[key].upd.StackObjectsCount = (tmpList.data[1].Inventory.items[key].upd.StackObjectsCount ? tmpList.data[1].Inventory.items[key].upd.StackObjectsCount : 1) + (tmpList.data[1].Inventory.items[key2].upd.StackObjectsCount ? tmpList.data[1].Inventory.items[key2].upd.StackObjectsCount : 1);
-					output.data.items.del.push({"_id": tmpList.data[1].Inventory.items[key2]._id});
-					tmpList.data[1].Inventory.items.splice(key2, 1);
+    for (let key in tmpList.data[1].Inventory.items) {
+        if (tmpList.data[1].Inventory.items[key]._id && tmpList.data[1].Inventory.items[key]._id == body.with) {
+            for (let key2 in tmpList.data[1].Inventory.items) {
+                if (tmpList.data[1].Inventory.items[key2]._id && tmpList.data[1].Inventory.items[key2]._id == body.item) {
+                    // we ending with item key after merge but we checking both of the items and deleting key2
+					let stackItem0 = 1;
+					let stackItem1 = 1;
+					if(typeof tmpList.data[1].Inventory.items[key].upd != "undefined")
+						stackItem0 = tmpList.data[1].Inventory.items[key].upd.StackObjectsCount;
+					if(typeof tmpList.data[1].Inventory.items[key2].upd != "undefined")
+						stackItem1 = tmpList.data[1].Inventory.items[key2].upd.StackObjectsCount;
 
-					profile.setCharacterData(tmpList);
-					return "OK";
-				}
-			}
-		}
-	}
+					if (stackItem0 == 1)
+						Object.assign(tmpList.data[1].Inventory.items[key],{"upd": {"StackObjectsCount": 1}});
+				
+                    tmpList.data[1].Inventory.items[key].upd.StackObjectsCount = stackItem0 + stackItem1;
+					
+                    output.data.items.del.push({"_id": tmpList.data[1].Inventory.items[key2]._id});
+                    tmpList.data[1].Inventory.items.splice(key2, 1);
 
-	return "";
+                    profile.setCharacterData(tmpList);
+                    return "OK";
+                }
+            }
+        }
+    }
+
+    return "";
 }
 // -> Fold item / generally weapon
 function foldItem(tmpList, body) {
@@ -367,16 +451,26 @@ function toggleItem(tmpList, body) {
 }
 // -> Tag item / Taggs item with given name and color
 function tagItem(tmpList, body) {
-	for (let item of tmpList.data[1].Inventory.items) {
-		if (item._id && item._id == body.item) {
-			item.upd.Tag = {"Color": body.TagColor, "Name": body.TagName};
+    for (let item of tmpList.data[1].Inventory.items) {
+        if (item._id == body.item) {
+            console.log(body.item);
+            if( item.upd!=null&&
+                item.upd!=undefined&&
+                item.upd!="undefined" )
+			{
+            item.upd.Tag = {"Color": body.TagColor, "Name": body.TagName};
+			}
+            else
+			{ //if object doesn't have upd create and add it
+            let myobject = {"_id": item._id,"_tpl": item._tpl,"parentId":item.parentId,"slotId": item.slotId,"location": item.location,"upd": {"Tag": {"Color": body.TagColor,"Name": body.TagName}}};
+            Object.assign(item,myobject); // merge myobject into item -- overwrite same properties and add missings
+            }
+            profile.setCharacterData(tmpList);
+            return "OK";
+        }
+    }
 
-			profile.setCharacterData(tmpList);
-			return "OK";
-		}
-	}
-
-	return "";
+    return "";
 }
 // -> Binds item to quick bar
 function bindItem(tmpList, body) {
@@ -439,12 +533,12 @@ function healPlayer(tmpList, body) {
 				item.upd.MedKit.HpResource -= body.count;
 			}
 
-			profile.setCharacterData(tmpList);
-
 			// remove medkit if its empty
 			if (item.upd.MedKit.HpResource == 0 ) {
 				removeItem(tmpList, {Action: 'Remove', item: body.item});
 			}
+
+			profile.setCharacterData(tmpList);
 		}
 	}
 	
@@ -554,8 +648,13 @@ function swapItem(tmpList, body) {
 	return "OK";
 }
 // Buying item from trader
-function buyItem(tmpList, body) {
-	let tmpTrader = trader.getAssort(body.tid);
+function buyItem(tmpList, body, trad = "") {
+	let tmpTrader = 0;
+	if(trad == "")
+		tmpTrader = trader.getAssort(body.tid);
+	else
+		tmpTrader = JSON.parse(utility.readJson("data/configs/assort/91_everythingTrader.json"));
+	console.log(tmpTrader.data.items[0]._id);
 	// Buy item has only 1 item thats why [0][0]
 	console.log(body.scheme_items);
 	let money = [];
@@ -573,7 +672,7 @@ function buyItem(tmpList, body) {
 	}
 	
 	// pay the item	to profile
-	if (!payMoney(tmpList, moneyObject, body.scheme_items)) {
+	if (!payMoney(tmpList, moneyObject, body, trad)) {
 		console.log("no money found");
 		return "";
 	}
@@ -621,8 +720,8 @@ function buyItem(tmpList, body) {
 				tmpSizeX = tmpSize[0] + tmpSize[2] + tmpSize[3];
 				tmpSizeY = tmpSize[1] + tmpSize[4] + tmpSize[5];
 					
-				for (let y = 0; y < stashY; y++) {
-					for (let x = 0; x < stashX; x++) {
+				for (let y = 0; y <= stashY - tmpSizeY; y++) {
+					for (let x = 0; x <= stashX - tmpSizeX; x++) {
 						badSlot = "no";
 
 						for (let itemY = 0; itemY < tmpSizeY; itemY++) {
@@ -637,14 +736,13 @@ function buyItem(tmpList, body) {
 								break;
 							}
 						}
-						console.log("Item placed at position [" +x + "," +y + "]");
-						//console.log(StashFS_2D);
 						if (badSlot == "no") {
+							console.log("Item placed at position [" +x + "," +y + "]");
 							let newItem = GenItemID();
 							let toDo = [[item._id, newItem]];
 
-							output.data.items.new.push({"_id": newItem, "_tpl": item._tpl, "parentId": "5c71b934354682353958ea35", "slotId": "hideout", "location": {"x": x, "y": y, "r": 0}, "upd": {"StackObjectsCount": StacksValue[stacks]}});
-							tmpList.data[1].Inventory.items.push({"_id": newItem, "_tpl": item._tpl, "parentId": "5c71b934354682353958ea35", "slotId": "hideout", "location": {"x": x, "y": y, "r": 0}, "upd": {"StackObjectsCount": StacksValue[stacks]}});
+							output.data.items.new.push({"_id": newItem, "_tpl": item._tpl, "parentId": tmpList.data[1].Inventory.stash, "slotId": "hideout", "location": {"x": x, "y": y, "r": 0}, "upd": {"StackObjectsCount": StacksValue[stacks]}});
+							tmpList.data[1].Inventory.items.push({"_id": newItem, "_tpl": item._tpl, "parentId": tmpList.data[1].Inventory.stash, "slotId": "hideout", "location": {"x": x, "y": y, "r": 0}, "upd": {"StackObjectsCount": StacksValue[stacks]}});
 							//tmpUserTrader.data[newItem] = [[{"_tpl": item._tpl, "count": prices.data.barter_scheme[item._tpl][0][0].count}]];
 							
 							while (true) {
@@ -699,22 +797,28 @@ function sellItem(tmpList, body) {
 	let money = 0;
 
 	// print debug information
-	console.log("Items:");
-	console.log(body.items);
+	//console.log("Items:");
+	//console.log(body.items);
 	let prices = JSON.parse(profile.getPurchasesData());
 	// find the items
-	for (let item of tmpList.data[1].Inventory.items) {
-		for (let i in body.items) {
-			let checkID = body.items[i].id.replace(' clone', '').replace(' clon', '');
-
+	for (let i in body.items) { // items to sell
+		console.log("selling item"+ JSON.stringify(body.items[i])); // print item trying to sell
+	for (let item of tmpList.data[1].Inventory.items) { // profile inventory, look into it if item exist
+			let isThereSpace = body.items[i].id.search(" ");
+			let checkID = body.items[i].id;
+			if(isThereSpace != -1)
+				checkID = checkID.substr(0, isThereSpace);
+			
 			// item found
-			if (item && item._id == checkID) {
+			if (item._id == checkID) {
+				console.log("Selling: " + checkID);
 				// add money to return to the player
 				let price_money = prices.data[item._id][0][0].count;
 				if (removeItem(tmpList, {Action: 'Remove', item: checkID}) == "OK") {
 					money += price_money * body.items[i].count;
 				}
 			}
+
 		}
 	}
 
@@ -727,12 +831,12 @@ function sellItem(tmpList, body) {
 	return "OK";
 }
 // separate is that selling or buying
-function confirmTrading(tmpList, body)  {
+function confirmTrading(tmpList, body, trader = "")  {
 
 	// buying
 	if (body.type == "buy_from_trader")  {
 		setPlayerStash();
-		return buyItem(tmpList, body);
+		return buyItem(tmpList, body, trader);
 	}
 
 	// selling
@@ -745,6 +849,9 @@ function confirmTrading(tmpList, body)  {
 // Ragfair trading
 function confirmRagfairTrading(tmpList, body) {
 	console.log(body);
+	/*
+	{ Action: 'RagFairBuyOffer',  offerId: '56d59d3ad2720bdb418b4577',  count: 1,  items: [ { id: '1566757577968610909', count: 42 } ] }
+	*/
 	body.Action = "TradingConfirm";
 	body.type = "buy_from_trader";
 	body.tid = "91_everythingTrader";
@@ -752,7 +859,7 @@ function confirmRagfairTrading(tmpList, body) {
 	body.scheme_id = 0;
 	body.scheme_items = body.items;
 
-	if (confirmTrading(tmpList, body) == "OK" ) {
+	if (confirmTrading(tmpList, body, "ragfair") == "OK" ) {
 		return "OK";
 	} else {
 		return "error";
@@ -862,6 +969,7 @@ function moving(info) {
 	return output;    
 }
 
+module.exports.GenItemID = GenItemID;
 module.exports.getOutput = getOutput;
 module.exports.resetOutput = resetOutput;
 module.exports.moving = moving;

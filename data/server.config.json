@@ -1,5 +1,5 @@
 {
-	"dev": false,
+	"dev": true,
 	"game": "E:/EFT/",
 	"server": {
 		"backendUrl": "http://192.168.1.8:1337",
@@ -20,13 +20,13 @@
 			"scav": 30
 		},
 		"spawn": {
-			"glasses": 30,
-			"faceCover": 40,
-			"headwear": 40,
-			"backpack": 25,
-			"armorVest": 25,
-			"medPocket": 10,
-			"itemPocket": 10
+			"glasses": 100,
+			"faceCover": 100,
+			"headwear": 100,
+			"backpack": 100,
+			"armorVest": 100,
+			"medPocket": 100,
+			"itemPocket": 100
 		}
 	}
 }
