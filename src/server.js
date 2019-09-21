@@ -9,9 +9,8 @@ const logger = require('./logger.js');
 const profile = require('./profile.js');
 const item = require('./item.js');
 const response = require('./response.js');
-const ver = "0.7.3";
-
-var settings = JSON.parse(utility.readJson("data/server.config.json")); 
+const ver = "0.7.4 RC.11";
+var settings = JSON.parse(utility.readJson("server.config.json")); 
 
 function version(){
 	return ver;
@@ -32,7 +31,6 @@ function getLocalIpAddress() {
  
 	return address; 
 } 
-
 function getCookies(req) {
 	let found = {}
 	let cookies = req.headers.cookie;
@@ -47,7 +45,6 @@ function getCookies(req) {
 
     return found;
 }
-
 function sendJson(resp, output) {
 	resp.writeHead(200, "OK", {'Content-Type': 'text/plain', 'content-encoding' : 'deflate', 'Set-Cookie' : 'PHPSESSID=' + profile.getActiveID()});
 	
@@ -55,7 +52,10 @@ function sendJson(resp, output) {
 		resp.end(buf);
 	});
 }
-
+function sendHTML(resp, output) {
+	resp.writeHead(200, "OK", {'Content-Type': 'text/html'});
+	resp.end(output);
+}
 function sendImage(resp, file) {
 	let fileStream = fs.createReadStream(file);
 
@@ -65,7 +65,6 @@ function sendImage(resp, file) {
 		fileStream.pipe(resp);
 	});
 }
-
 function saveProfileProgress(offRaidData)
 {
 	 	let profile_data = JSON.parse(utility.readJson(settings.game + "\\SavedProfile.json"));
@@ -94,12 +93,16 @@ function saveProfileProgress(offRaidData)
 		string_inventory = string_inventory.replace(new RegExp("GClass779", 'g'), "FireMode");
 		string_inventory = string_inventory.replace(new RegExp("GClass796", 'g'), "Sight");
 		string_inventory = string_inventory.replace(new RegExp("GClass791", 'g'), "MedKit");
+		string_inventory = string_inventory.replace(new RegExp("GClass781", 'g'), "FoodDrink");
 		string_inventory = string_inventory.replace(new RegExp("GClass778", 'g'), "FaceShield");
 		string_inventory = string_inventory.replace(new RegExp("GClass788", 'g'), "Light");
 		string_inventory = string_inventory.replace(new RegExp("GClass786", 'g'), "Keycard");
 		string_inventory = string_inventory.replace(new RegExp("GClass799", 'g'), "Tag");
 		string_inventory = string_inventory.replace(new RegExp("GClass800", 'g'), "Togglable");
-		// left to check: SpawnedInSession, Dogtag
+
+		string_inventory = string_inventory.replace(new RegExp("GClass797", 'g'), "Repairable");
+
+		// left to check: SpawnedInSession, Dogtag GClass781
 
 		//and then re-parse the string into an object preparing to replace ID fix
 		offRaidProfile.Inventory.items = JSON.parse(string_inventory);
@@ -176,23 +179,16 @@ function saveProfileProgress(offRaidData)
 		utility.writeJson(settings.game + "\\SavedProfile.json", "{}");
 		profile.setCharacterData(currentProfile);	
 }
-
 function sendResponse(req, resp, body) {
 	if(req.url == "/OfflineRaidSave"){
 		return;
 	}
 	let output = "";
-	//fix for images crash 'toString' of null
-	body = ((body !== null && body != "" && body != "{}")?body.toString():"{}");
 	// reset item output
 	item.resetOutput();
 	// get active profile
 
-		profile.setActiveID(getCookies(req)['PHPSESSID']);
-		console.log("[Request]::" + req.url, "cyan");
-		if(settings.dev == true)
-			console.log(body);
-	
+		profile.setActiveID(getCookies(req)['PHPSESSID']);	
 		// get response
 		if (req.method == "POST") {
 			output = response.get(req, body);
@@ -201,11 +197,13 @@ function sendResponse(req, resp, body) {
 		}
 		
 		// prepare message to send
-		if (output == "DONE") {
+		if (output == "DONE" || output == "NULLGET") 
+		{
 			return;
 		}
 
-		if (output == "CONTENT") {
+		if (output == "CONTENT") 
+		{
 			let image = req.url.replace('/uploads/CONTENT/banners/', './data/images/banners/').replace('banner_', '');
 
 			console.log("The banner image location: " + image);
@@ -213,34 +211,44 @@ function sendResponse(req, resp, body) {
 			return;
 		}
 
-		if (output == "IMAGE") {
+		if (output == "IMAGE") 
+		{
+			if(req.url.includes("/files/quest") || req.url.includes("/files/handbook"))
+				req.url = req.url.replace("/files", "/data/images")
 			sendImage(resp, "." + req.url);
 			return;
 		}
 		//if(req.url == "/client/game/profile/items/moving")
-		//	console.log(output);
-	sendJson(resp, output);
+			//console.log(output,"","",true);
+		if(req.url === "/")
+			sendHTML(resp, output);
+		else
+			sendJson(resp, output);
 	profile.setActiveID(0);
 }
-
 function handleRequest(req, resp) {
 	// separate request in the log
-	logger.separator();
+	if(settings.debug.showSeparator === true)
+	{
+		logger.separator();
+	}
 	
 	let prof = "";
 	if (req.method == "POST") {
 		if(req.url != "/OfflineRaidSave"){
 		profile.setActiveID(getCookies(req)['PHPSESSID']);
-		prof = " Profile(" + profile.getActiveID() + ")";
+		prof = "[Profile:" + profile.getActiveID() + "]";
 		}
 		else
 		{
 		}
 	}
 	// get the IP address of the client
-	let IP = "[Access][IP > " + req.connection.remoteAddress + "]";
-	let method = (settings.dev == true)?" <" + req.method + ">":"";
-	console.log(IP + method + prof, "cyan"); //log display
+	let IP = "[INFO][IP>" + req.connection.remoteAddress + "]";
+	let URL = "[Req:" + req.url + "]";
+	let method = (settings.debug.debugMode == true)?"<" + req.method + ">":"";
+	// [INFO][IP>192.168.1.1:1337]<POST>[Profile:0][Req:/client/items]
+	console.log(IP + method + prof + URL, "cyan"); //log display
 	
 	if (req.method == "POST") {
 		// received data
@@ -249,19 +257,23 @@ function handleRequest(req, resp) {
             if (data.length > 1000000 && req.url != "/OfflineRaidSave")
                 request.connection.destroy();
 			if(req.url == "/OfflineRaidSave"){
-				let PreparedStringData = data.toString().replace(/(\\r\\n)+/g, "").replace(/(\\)+/g, "");
-                console.log(PreparedStringData); // here is a bug not all data is transfered
-					//save offline profile there checking the data on the fly / "exfil" and "profile" entry
-					
-				let parseBody = JSON.parse(PreparedStringData);
-				profile.setActiveID(parseBody.aid);
-				let profile_data = utility.readJson(settings.game + "\\SavedProfile.json");
-				console.log("Request: /SAVE_PROFILE_REQUEST", "cyan");
-				saveProfileProgress(parseBody);
+				if(settings.server.lootSaving === true)
+				{ // save loot if lootSaving is enabled - created on community requests
+					let PreparedStringData = data.toString().replace(/(\\r\\n)+/g, "").replace(/(\\)+/g, "");
+					let parseBody = JSON.parse(PreparedStringData);
+					profile.setActiveID(parseBody.aid);//get aid from requested profile and set it to active profile
+					let profile_data = utility.readJson(settings.game + "\\SavedProfile.json");
+					console.log("[CUSTOM][SAVE_PROFILE_REQUEST] - Profile aid:" + parseBody.aid, "cyan");
+					saveProfileProgress(parseBody);
+				}
 				return;
 			} else {
 				// extract data
 				zlib.inflate(data, function(err, body) {
+					// SHOW BODY ONLY ON POST REQUESTS AND IF NOT SAVE PROGRESS
+					body = ((body !== null && body != "" && body != "{}")?body.toString():"{}");
+					if(settings.debug.debugMode == true)
+						console.log(body, "", "", true);
 					sendResponse(req, resp, body);
 				});
 			}
@@ -270,7 +282,6 @@ function handleRequest(req, resp) {
 		sendResponse(req, resp, null);
 	}
 }
-
 function start() {
 	let server = http.createServer();
 	let port = settings.server.port;
@@ -279,22 +290,26 @@ function start() {
 	// set the ip and backendurl 
 	settings.server.ip = ip; 
 	settings.server.backendUrl = "http://" + ip + ":" + port; 
-	utility.writeJson("data/server.config.json", settings); 
+	utility.writeJson("server.config.json", settings); 
  
 	// show our watermark
-	console.log("Just EmuTarkov " + version(), "white", "cyan");
-	console.log("https://justemutarkov.github.io/", "white", "cyan");
-	logger.separator();
+	console.log("> JustEmuTarkov " + version() + "  <", "white", "cyan");
+	console.log("> https://justemutarkov.github.io/  <", "white", "cyan");
+	if(settings.debug.showSeparator === true)
+	{
+		logger.separator();
+	}
 
 	// check if port is already being listened to 
 	server.on('error', function () {
-		console.log("Port " + port + " is already in use", "white", "red");
-		return;
+		console.log("Port " + port + " is already in use. Check if console isnt already open or change port", "white", "red");
+		if(settings.debug.debugMode == true)
+			require('child_process').exec('start "" "' + __dirname.substring(0, __dirname.length - 3) + 'logs"');
     });
 
 	// listen to port on ip
 	server.listen(port, function() {
-		console.log("Listening on port: " + port + " with ip " + ip, "white", "green");
+		console.log("> Starting listening on http://" + ip + ":" + port, "white", "green", true);
 	});
 	
 	// handle request 

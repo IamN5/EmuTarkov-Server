@@ -10,7 +10,7 @@ var tradersDir = "data/configs/traders/";
 var assortDir = "data/configs/assort/";
 var traders = [];
 var assorts = [];
-var settings = JSON.parse(utility.readJson("data/server.config.json"));
+var settings = JSON.parse(utility.readJson("server.config.json"));
 
 function loadAllTraders() {
 	let traderFiles = fs.readdirSync(tradersDir);
@@ -18,7 +18,7 @@ function loadAllTraders() {
 	for (let file in tradersDir) {
 		//console.log(file);
 		if (traderFiles[file] !== undefined)
-			if(settings.dev == true || ((settings.dev == false || settings.dev === undefined)&& traderFiles[file] != "91_everythingTrader.json" && traderFiles[file] != "92_SecretTrader.json"))
+			if(settings.debug.debugMode == true || ((settings.debug.debugMode == false || settings.debug.debugMode === undefined)&& traderFiles[file] != "91_everythingTrader.json" && traderFiles[file] != "92_SecretTrader.json"))
 			{
 				traders.push(JSON.parse(utility.readJson(tradersDir + traderFiles[file])));
 			}
@@ -30,7 +30,7 @@ function loadAllAssorts() {
 	// load assort files
 	for (let file in assortDir) {
 		if (assortFiles[file] !== undefined)
-			if(settings.dev == true || ((settings.dev == false || settings.dev === undefined) && assortFiles[file] != "91_everythingTrader.json" && assortFiles[file] != "92_SecretTrader.json"))
+			if(settings.debug.debugMode == true || ((settings.debug.debugMode == false || settings.debug.debugMode === undefined) && assortFiles[file] != "91_everythingTrader.json" && assortFiles[file] != "92_SecretTrader.json"))
 			{
 				assorts.push(JSON.parse(utility.readJson(assortDir + assortFiles[file])));
 			}
@@ -79,11 +79,14 @@ function lvlUp(playerLvl) {
 	let lvlUpTraders = [];
 	for (let dynTrader of dynamicTraders) {
 		let traderLoyality = get(dynTrader).data.loyalty;
-		if (traderLoyality.currentLevel < Object.keys(traderLoyality.loyaltyLevels).length) {
+		if (traderLoyality.currentLevel < (Object.keys(traderLoyality.loyaltyLevels).length - 1)) 
+		{ //check traders from counting from 0
+			
 			let newLvl = traderLoyality.currentLevel + 1;
 			if  ((playerLvl >= traderLoyality.loyaltyLevels[newLvl].minLevel) &&
 				 (traderLoyality.currentSalesSum >= traderLoyality.loyaltyLevels[newLvl].minSalesSum) &&
-				 (traderLoyality.currentStanding >= traderLoyality.loyaltyLevels[newLvl].minStanding)) {
+				 (traderLoyality.currentStanding >= traderLoyality.loyaltyLevels[newLvl].minStanding)) 
+			{
 				// lvl up trader
 				traderLoyality.currentLevel += 1;
 				get(dynTrader).data.loyalty = traderLoyality;
