@@ -1,4 +1,4 @@
-# EmuTarkov
+# JustEmuTarkov 0.7.4
 Escape From Tarkov backend emulator written in JS.
 
 - removed EXE file cause its making false positive virus detections(from github repository)
