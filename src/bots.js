@@ -1,10 +1,10 @@
 "use strict";
 
+const item = require('./item.js');
 const utility = require('./utility.js');
 const profile = require('./profile.js');
 
-var items = JSON.parse(utility.readJson('data/configs/items.json'));
-																				   
+var items = item.PrepareItemsList();
 var presets = JSON.parse(utility.readJson("data/configs/bots/botPresets.json"));
 var weaponPresets = JSON.parse(utility.readJson("data/configs/bots/botWeapons.json"));
 var names = JSON.parse(utility.readJson("data/configs/bots/botNames.json"));
@@ -14,8 +14,10 @@ var handbook = JSON.parse(utility.readJson('data/configs/templates.json'));
 function getRandomFloat(min = 0, max = 100) {
 	return Math.random() * (max - min + 1) + min;
 }
-function calculateItemChance(preset)
+function calculateItemChance(preset, Role = "")
 { // calculate tiers chance
+
+// pmcBot / followerBully
 	let chance = 100;
 	let chanceTable = [];
 	for(let i = 0; i < Object.keys(preset).length; i++)
@@ -24,7 +26,12 @@ function calculateItemChance(preset)
 		let lastChance = ( (i != 0) ? chanceTable[i-1] : 0 );
 		chanceTable[i] = lastChance + chance;
 	}
-	var rng = getRandomFloat();
+	let rng = getRandomFloat();
+	if((Role === "pmcBot" || Role === "followerBully") && rng <= 50)
+	{ // if pmcBot and bullyfollower then check if chance is to select tier 0 if yes reroll to higher tier of weapon
+		rng = getRandomFloat(50);
+	}
+	
 	for (let j = 0; j < chanceTable.length; j++){
 		if(j == 0)
 		{
@@ -68,16 +75,16 @@ function generateAppearance(bot, type = "")
 		botName = "Scav";
 		break;
 	case "sniper":
-		head = presets.Head[utility.getRandomIntEx(presets.Head.length) - 1];
-		body = presets.Body[utility.getRandomIntEx(presets.Body.length) - 1];
-		feet = presets.Feet[utility.getRandomIntEx(presets.Feet.length) - 1];
+		head = presets.Head.savage[utility.getRandomIntEx(presets.Head.savage.length) - 1];
+		body = presets.Body.savage[utility.getRandomIntEx(presets.Body.savage.length) - 1];
+		feet = presets.Feet.savage[utility.getRandomIntEx(presets.Feet.savage.length) - 1];
 		rng_voice = utility.getRandomInt(1, 3);
 		botName = "Scav";
 		break;
 	case "raider":
-		head = presets.Head[utility.getRandomIntEx(presets.Head.length) - 1];
-		body = presets.Body[utility.getRandomIntEx(presets.Body.length) - 1];
-		feet = presets.Feet[utility.getRandomIntEx(presets.Feet.length) - 1];
+		head = presets.Head.pmc[utility.getRandomIntEx(presets.Head.pmc.length) - 1];
+		body = presets.Body.pmc[utility.getRandomIntEx(presets.Body.pmc.length) - 1];
+		feet = presets.Feet.pmc[utility.getRandomIntEx(presets.Feet.pmc.length) - 1];
 		break;
 	case "usec":
 		head = "usec_head_1";
@@ -135,6 +142,8 @@ function generateBotWeapon(params)
 	let tier = 0; let len = 0; let randomize = 0; let weapon_preset_main = 0; let weapon_preset_pist = 0;
 	//randomize Mainweapon and hostler weapon rolling if there should we (main weapon and postol) / (pistol) or (mainweapin only)
 	const chanceOfGetting = [settings.bots.weapon.main, settings.bots.weapon.secondary];
+	if(params.Role == "")
+		chanceOfGetting[0] = 100;
 	if (params.Role === "marksman")
 	{ // if bot is marksman sniper get item from fdiffrent table
 		len = presets.Weapons_Marksman.length;
@@ -145,7 +154,7 @@ function generateBotWeapon(params)
 	{
 		if(utility.getRandomIntEx(100) < chanceOfGetting[0])
 		{ // try to roll weapon
-			tier = calculateItemChance(presets.Weapons);
+			tier = calculateItemChance(presets.Weapons, params.Role);
 			len = presets.Weapons[tier].length;
 			randomize = utility.getRandomIntEx(len);
 			weapon_preset_main = presets.Weapons[tier][randomize]; // it should not have any pistols
@@ -200,10 +209,9 @@ function generateBotWeapon(params)
 	return item;
 }
 // tier dependent loots
-function generateItemByPattern(itemType, Inventory)
+function generateItemByPattern(itemType, Inventory, Role = "")
 {
-	
-	let tier = calculateItemChance(presets[itemType]);
+	let tier = calculateItemChance(presets[itemType], Role);
 	let len = presets[itemType][tier].length;
 	let randomize = ((len === 0)?0:utility.getRandomIntEx(len) - 1);
 	let item = {
@@ -268,7 +276,7 @@ function updCreator(itemParent, item)
 	switch(itemParent)
 	{
 		case "590c745b86f7743cc433c5f2": // DogTags
-			return { "Dogtag": {"Nickname": "Nikita Buyanov","Side": "Bear","Level": 50,"Time": "2020-04-16T13:37:00","Status": "Destroyed by ","KillerName": "JustEmuTarkov","WeaponName": "Choco bar"}};
+			return { "Dogtag": {"Nickname": "Nikita Buyanov","Side": "Bear","Level": 50,"Time": "2020-04-16T13:37:00","Status": "Destroyed by ","KillerName": "JustEmuTarkov","WeaponName": "Choco bar"} };
 		case "5448f3a14bdc2d27728b4569": // "Drugs",
 		case "5448f39d4bdc2d0a728b4568": // "Medkits" (ok)
 			return { MedKit: {HpResource: item._props.MaxHpResource} };
@@ -732,55 +740,46 @@ function generateBaseBot(params)
 			break;
 	}
 
+	//BOTS CONSTANTS DEPENDING ON Role
+	if(Role === "pmcBot") 
+	{
+		settings.bots.equipment.backpack = 20; // force 20% backpack chance
+	}
+	if(Role === "followerBully")
+	{
+		settings.bots.equipment.backpack = 100;
+	}
+	
 	// generate bot skill
 	bot = generateBotSkill(bot, params);
 
-	
+	//{"_id":"5d5ee20446b16820305c188e","_tpl":"59f32bb586f774757e1e8442","parentId":"5cb0dd1946b16858856ddff0","slotId":"Dogtag","upd":{"Dogtag":{"Nickname":"","Side":"Bear","Level":1,"Time":"0001-01-01T00:00:00","Status":"","KillerName":"","WeaponName":""}}}
 	if (params.Role != "followerBully" && settings.bots.pmcWar.enabled == true) 
 	{ // generate PMC bot instead
 		if (utility.getRandomIntEx(100) <= settings.bots.pmcWar.sideUsec) 
 		{ 
 			bot = generateAppearance(bot, "usec");
 			bot.Info.Side = "Usec";
-			bot.Iventory.items.push({
-				_id:  "dogtag_" + 10000000000000000 + utility.getRandomIntEx(89999999999999999),
+			bot.Inventory.items.push({
+				_id:  "dogtag_" + 100000000 + utility.getRandomIntEx(899999999),
 				_tpl: "59f32bb586f774757e1e8442",
-				parentId: bot.Iventory.equipment,
+				parentId: bot.Inventory.equipment,
 				slotId: "Dogtag",
-				upd: {
-				  Dogtag: {
-					Nickname: "",
-					Side: bot.Info.Side,
-					Level: 1,
-					Time: "0001-01-01T00:00:00",
-					Status: "",
-					KillerName: "",
-					WeaponName: ""
-				  }
-				}
-			})
+				upd: {"Dogtag":{"Nickname": bot.Info.Nickname,"Side":"Usec","Level": bot.Info.Level,"Time":"0001-01-01T00:00:00","Status":"","KillerName":"","WeaponName":""}}
+			});
+			
 			//add dogtag here
 		} 
 		else 
 		{
 			bot = generateAppearance(bot, "bear");
 			bot.Info.Side = "Bear";
-			bot.Iventory.items.push({
-				_id:  "dogtag_" + 10000000000000000 + utility.getRandomIntEx(89999999999999999),
+			bot.Inventory.items.push({
+				_id:  "dogtag_" + 100000000 + utility.getRandomIntEx(899999999),
 				_tpl: "59f32bb586f774757e1e8442",
-				parentId: bot.Iventory.equipment,
+				parentId: bot.Inventory.equipment,
 				slotId: "Dogtag",
-				upd: {
-				  Dogtag: {
-					Nickname: "",
-					Side: bot.Info.Side,
-					Level: 1,
-					Time: "0001-01-01T00:00:00",
-					Status: "",
-					KillerName: "",
-					WeaponName: ""
-				  }
-				}
+				upd: {"Dogtag":{"Nickname": bot.Info.Nickname,"Side":"Bear","Level": bot.Info.Level,"Time":"0001-01-01T00:00:00","Status":"","KillerName":"","WeaponName":""}}
 			});
 		}
 	}
@@ -814,28 +813,28 @@ function generateBaseBot(params)
 	
 	if (utility.getRandomIntEx(100) <= settings.bots.equipment.eyewear) 
 	{ // chance to add glasses
-		bot.Inventory.items = generateItemByPattern("Eyewear", bot.Inventory.items);
+		bot.Inventory.items = generateItemByPattern("Eyewear", bot.Inventory.items, params.Role);
 	}
 	
 	if (utility.getRandomIntEx(100) <= settings.bots.equipment.facecover) 
 	{ // chance to add face cover
-		bot.Inventory.items = generateItemByPattern("FaceCover", bot.Inventory.items);
+		bot.Inventory.items = generateItemByPattern("FaceCover", bot.Inventory.items, params.Role);
 	}
 
 	
 	if (utility.getRandomIntEx(100) <= settings.bots.equipment.headwear) 
 	{ // chance to add headwear
-		bot.Inventory.items = generateItemByPattern("Headwear", bot.Inventory.items);
+		bot.Inventory.items = generateItemByPattern("Headwear", bot.Inventory.items, params.Role);
 	}
-	
+
 	if (utility.getRandomIntEx(100) <= settings.bots.equipment.backpack) 
 	{ // chance to add a backpack
-		bot.Inventory.items = generateItemByPattern("Backpack", bot.Inventory.items);
+		bot.Inventory.items = generateItemByPattern("Backpack", bot.Inventory.items, params.Role);
 	}
 	
 	if (utility.getRandomIntEx(100) <= settings.bots.equipment.armorvest) 
 	{ // chance to add an armor vest
-		bot.Inventory.items = generateItemByPattern("ArmorVest", bot.Inventory.items);
+		bot.Inventory.items = generateItemByPattern("ArmorVest", bot.Inventory.items, params.Role);
 	}
 	
 	// chance to add a med pocket, bully followers have 100% chance

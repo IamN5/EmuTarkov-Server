@@ -176,11 +176,7 @@ function get(req, body) {
 
 		case "/client/items":
 			// custom items handling
-			let base = JSON.parse(utility.readJson('data/configs/items.json'));
-			let newI = JSON.parse(utility.readJson('data/configs/items_custom.json'));
-			for(let i of newI){
-				base.data[i._id] = i;
-			}
+			let base = item.PrepareItemsList();
 			output = JSON.stringify(base);
 			break;
 
@@ -224,7 +220,8 @@ function get(req, body) {
 		case "/client/game/bot/generate":
 			//MAKE SURE TO REMOVE THIS LATER - THEMAOCI
 			if(body == "{}")
-				body = "{\"conditions\":[{\"Role\":\"assault\",\"Limit\":30,\"Difficulty\":\"normal\"},{\"Role\":\"assault\",\"Limit\":30,\"Difficulty\":\"hard\"}]}";
+				
+				body = "{\"conditions\":[{\"Role\":\"pmcBot\",\"Limit\":30,\"Difficulty\":\"normal\"}]}";
 			output = JSON.stringify( {"err": 0,"errmsg": null,"data": bots.generate(JSON.parse(body)) } );
 			break;
 

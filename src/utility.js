@@ -41,6 +41,11 @@ function removeDir(dir)
     
 	fs.rmdirSync(dir);
 }
+function getTimestamp()
+{
+	let time = new Date();
+	return time.getTime();
+}
 function getTime()
 {
 	let today = new Date();
@@ -65,5 +70,6 @@ module.exports.writeJson = writeJson;
 module.exports.getRandomInt = getRandomInt;
 module.exports.getRandomIntEx = getRandomIntEx;
 module.exports.removeDir = removeDir;
+module.exports.getTimestamp = getTimestamp;
 module.exports.getTime = getTime;
 module.exports.getDate = getDate;

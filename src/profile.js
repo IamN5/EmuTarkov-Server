@@ -1,5 +1,6 @@
 "use strict";
 
+const item = require('./item.js');
 const utility = require('./utility.js');
 const fs = require('fs');
 
@@ -62,7 +63,7 @@ function getPurchasesData() {
 	//load files
 	let multiplier = 0.9;
 	let data = JSON.parse(utility.readJson('data/profiles/character_' + profileID + '.json'));
-	let items = JSON.parse(utility.readJson('data/configs/items.json'));
+	let items = item.PrepareItemsList();
 	items = items.data;
 	//prepared vars
 	let equipment = data.Inventory.equipment;

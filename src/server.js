@@ -88,21 +88,29 @@ function saveProfileProgress(offRaidData)
 		var string_inventory = JSON.stringify(offRaidProfile.Inventory.items);
 
 		//replace all these GClasses shit
-		string_inventory = string_inventory.replace(new RegExp("GClass795", 'g'), "Repairable");
-		string_inventory = string_inventory.replace(new RegExp("GClass780", 'g'), "Foldable");
-		string_inventory = string_inventory.replace(new RegExp("GClass779", 'g'), "FireMode");
-		string_inventory = string_inventory.replace(new RegExp("GClass796", 'g'), "Sight");
-		string_inventory = string_inventory.replace(new RegExp("GClass791", 'g'), "MedKit");
-		string_inventory = string_inventory.replace(new RegExp("GClass781", 'g'), "FoodDrink");
-		string_inventory = string_inventory.replace(new RegExp("GClass778", 'g'), "FaceShield");
-		string_inventory = string_inventory.replace(new RegExp("GClass788", 'g'), "Light");
-		string_inventory = string_inventory.replace(new RegExp("GClass786", 'g'), "Keycard");
-		string_inventory = string_inventory.replace(new RegExp("GClass799", 'g'), "Tag");
-		string_inventory = string_inventory.replace(new RegExp("GClass800", 'g'), "Togglable");
-
-		string_inventory = string_inventory.replace(new RegExp("GClass797", 'g'), "Repairable");
-
-		// left to check: SpawnedInSession, Dogtag GClass781
+		let replaceConfig = JSON.parse(utility.readJson("data/configs/offlineProgressionReplacer.json")); 
+		var keys = Object.keys(replaceConfig);
+		for(let iterate = 0; iterate < keys.length; iterate++)
+		{
+			string_inventory = string_inventory.replace(new RegExp(keys[iterate], 'g'), replaceConfig[keys[iterate]]);
+		}
+		/* version 3333 
+		{
+			"GClass798": "Sight",
+			"GClass795": "Repairable",
+			"GClass780": "Foldable",
+			"GClass779": "FireMode",
+			"GClass791": "MedKit",
+			"GClass781": "FoodDrink",
+			"GClass778": "FaceShield",
+			"GClass800": "Togglable",
+			"GClass786": "Keycard",
+			"GClass799": "Tag",
+			"GClass788": "Light",
+			"GClass000": "Dogtag" ??? unknownGCLASS
+		}
+		*/
+		// left to check: SpawnedInSession, Dogtag
 
 		//and then re-parse the string into an object preparing to replace ID fix
 		offRaidProfile.Inventory.items = JSON.parse(string_inventory);

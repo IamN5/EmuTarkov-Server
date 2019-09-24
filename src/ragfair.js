@@ -1,7 +1,8 @@
 "use strict";
 
 const utility = require('./utility.js');
-const items = JSON.parse(utility.readJson("data/configs/items.json"));
+const item = require('./item.js');
+const items = item.PrepareItemsList();
 const handbook = JSON.parse(utility.readJson('data/configs/templates.json'));
 
 //cloth

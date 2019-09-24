@@ -4,7 +4,7 @@ const utility = require('./utility.js');
 const profile = require('./profile.js');
 const trader = require('./trader.js');
 
-var items = JSON.parse(utility.readJson('data/configs/items.json'));
+var items = PrepareItemsList();
 var templates = JSON.parse(utility.readJson('data/configs/templates.json'));
 var AllQuests = JSON.parse(utility.readJson('data/configs/questList.json'));
 var stashX = 10; // fix for your stash size
@@ -12,6 +12,14 @@ var stashY = 66; // ^ if you edited it ofc
 var output = "";
 // --------------------------------------------------------------------------------------------------------------------- \\
 
+function PrepareItemsList(){
+	let base = JSON.parse(utility.readJson('data/configs/items.json'));
+	let newI = JSON.parse(utility.readJson('data/configs/items_custom.json'));
+	for(let i of newI){
+		base.data[i._id] = i;
+	}
+	return base;
+}
 function recheckInventoryFreeSpace(tmpList) 
 { // recalculate stach taken place
 	let Stash2D = Array(stashY).fill(0).map(x => Array(stashX).fill(0));
@@ -28,11 +36,14 @@ function recheckInventoryFreeSpace(tmpList)
 			let fW = (item.location.rotation == "Vertical" ? iH : iW);
 			
 			for (let y = 0; y < fH; y++) {
-				if(item.location.y + y < stashY && item.location.x + fW < stashX) // fixed filling out of bound
-					Stash2D[item.location.y + y].fill(1, item.location.x, item.location.x + fW);
+				if(item.location.y + y <= stashY && item.location.x + fW <= stashX){ // fixed filling out of bound
+					let FillTo = ((item.location.x + fW >= stashX)?stashX:item.location.x + fW);
+					Stash2D[item.location.y + y].fill(1, item.location.x, FillTo);
+				}
 			}
 		}
 	}
+	console.log(Stash2D);
 	return Stash2D;
 }
 function getCurrency(currency) 
@@ -256,7 +267,7 @@ function getSize(itemtpl, itemID, location)
 }
 function acceptQuest(tmpList, body) 
 { // -> Accept quest
-	tmpList.data[1].Quests.push({"qid": body.qid.toString(), "startTime": new Date(), "status": 2}); // statuses seem as follow - 1 - not accepted | 2 - accepted | 3 - failed | 4 - completed
+	tmpList.data[1].Quests.push({"qid": body.qid.toString(), "startTime": utility.getTimestamp(), "status": 2}); // statuses seem as follow - 1 - not accepted | 2 - accepted | 3 - failed | 4 - completed
 	profile.setCharacterData(tmpList);
 	return "OK";
 }
@@ -971,3 +982,4 @@ module.exports.getOutput = getOutput;
 module.exports.resetOutput = resetOutput;
 module.exports.moving = moving;
 module.exports.removeItem = removeItem;
+module.exports.PrepareItemsList = PrepareItemsList;
