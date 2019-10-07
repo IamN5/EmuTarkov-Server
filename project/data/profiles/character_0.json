@@ -121,7 +121,7 @@
 					"isSearched": true
 				},
 				"upd": {
-					"StackObjectsCount": 9999999
+					"StackObjectsCount": 9999995
 				}
 			},
 			{
@@ -153,6 +153,62 @@
 				"_tpl": "557ffd194bdc2d28148b457f",
 				"parentId": "5c6687d65e9d882c8841f0fd",
 				"slotId": "Pockets"
+			},
+			{
+				"_id": "1570426201869928363",
+				"_tpl": "57347ca924597744596b4e71",
+				"parentId": "5c6687d65e9d882c8841f0fc",
+				"slotId": "hideout",
+				"location": {
+					"x": 0,
+					"y": 0,
+					"r": 0
+				},
+				"upd": {
+					"StackObjectsCount": 1
+				}
+			},
+			{
+				"_id": "1570426208243938701",
+				"_tpl": "57347c2e24597744902c94a1",
+				"parentId": "5c6687d65e9d882c8841f0fc",
+				"slotId": "hideout",
+				"location": {
+					"x": 2,
+					"y": 0,
+					"r": 0
+				},
+				"upd": {
+					"StackObjectsCount": 1
+				}
+			},
+			{
+				"_id": "1570426214619305431",
+				"_tpl": "59e3596386f774176c10a2a2",
+				"parentId": "5c6687d65e9d882c8841f0fc",
+				"slotId": "hideout",
+				"location": {
+					"x": 4,
+					"y": 0,
+					"r": 0
+				},
+				"upd": {
+					"StackObjectsCount": 1
+				}
+			},
+			{
+				"_id": "1570426224177271312",
+				"_tpl": "59e3658a86f7741776641ac4",
+				"parentId": "5c6687d65e9d882c8841f0fc",
+				"slotId": "hideout",
+				"location": {
+					"x": 5,
+					"y": 0,
+					"r": 0
+				},
+				"upd": {
+					"StackObjectsCount": 1
+				}
 			}
 		],
 		"equipment": "5c6687d65e9d882c8841f0fd",
@@ -518,14 +574,10 @@
 	},
 	"Stats": {
 		"SessionCounters": {
-			"Items": [
-				
-			]
+			"Items": []
 		},
 		"OverallCounters": {
-			"Items": [
-				
-			]
+			"Items": []
 		},
 		"SessionExperienceMult": 0,
 		"TotalSessionExperience": 0,

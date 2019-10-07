@@ -5,11 +5,15 @@ const utility = require('./utility.js');
 const profile = require('./profile.js');
 
 var items = item.PrepareItemsList();
-var presets = JSON.parse(utility.readJson("data/configs/bots/botPresets.json"));
-var weaponPresets = JSON.parse(utility.readJson("data/configs/bots/botWeapons.json"));
+var botPresets = JSON.parse(utility.readJson("data/configs/bots/botPresets.json"));
+var pmcPresets = JSON.parse(utility.readJson("data/configs/bots/pmcPresets.json"));
+var botWeaponPresets = JSON.parse(utility.readJson("data/configs/bots/botWeapons.json"));
+var pmcWeaponPresets = JSON.parse(utility.readJson("data/configs/bots/pmcWeapons.json"));
 var names = JSON.parse(utility.readJson("data/configs/bots/botNames.json"));
 var settings = JSON.parse(utility.readJson("server.config.json"));
 var handbook = JSON.parse(utility.readJson('data/configs/templates.json'));
+
+var pmcCount = 0;   // PMC count added for debugging reasons.
 
 function getRandomFloat(min = 0, max = 100) {
 	return Math.random() * (max - min + 1) + min;
@@ -25,13 +29,14 @@ function calculateItemChance(preset, Role = "")
 		chance /= 2
 		let lastChance = ( (i != 0) ? chanceTable[i-1] : 0 );
 		chanceTable[i] = lastChance + chance;
-	}
+    }
+
 	let rng = getRandomFloat();
 	if((Role === "pmcBot" || Role === "followerBully") && rng <= 50)
 	{ // if pmcBot and bullyfollower then check if chance is to select tier 0 if yes reroll to higher tier of weapon
 		rng = getRandomFloat(50);
 	}
-	
+	// [ 50, 75, 87.5, 93.75, 96.875 ]
 	for (let j = 0; j < chanceTable.length; j++){
 		if(j == 0)
 		{
@@ -62,7 +67,9 @@ function generateBotBoss(params, fileName)
 function generateAppearance(bot, type = "")
 {
 	let head; let body; let feet;
-	let rng_voice = 0; let botName = "";
+    let rng_voice = 0; let botName = "";
+    
+    presets = botPresets;
 	
 	switch(type)
 	{
@@ -115,7 +122,7 @@ function generateAppearance(bot, type = "")
 	bot.Info.Voice = ( (type === "raider") ? presets.pmcBotVoices[utility.getRandomIntEx(presets.pmcBotVoices.length)] : botName + "_" + rng_voice );
 	bot.Customization.Head.path = "assets/content/characters/character/prefabs/" + head + ".bundle";
 	bot.Customization.Body.path = "assets/content/characters/character/prefabs/" + body + ".bundle";
-	bot.Customization.Feet.path = "assets/content/characters/character/prefabs/" + feet + ".bundle";	
+    bot.Customization.Feet.path = "assets/content/characters/character/prefabs/" + feet + ".bundle";
 	
 	return bot;
 }
@@ -139,9 +146,18 @@ function generateBotSkill(bot, params)
 
 function generateBotWeapon(params)
 { // generating presets
-	let tier = 0; let len = 0; let randomize = 0; let weapon_preset_main = 0; let weapon_preset_pist = 0;
+    let tier = 0; let len = 0; let randomize = 0; let weapon_preset_main = 0; let weapon_preset_pist = 0;
+    
 	//randomize Mainweapon and hostler weapon rolling if there should we (main weapon and postol) / (pistol) or (mainweapin only)
-	const chanceOfGetting = [settings.bots.weapon.main, settings.bots.weapon.secondary];
+    const chanceOfGetting = [settings.bots.weapon.main, settings.bots.weapon.secondary];
+
+    // decides which set of presets to use.
+    if (params.Role === "pmcBot") {
+        presets = pmcPresets;
+    } else {
+        presets = botPresets;
+    }
+    
 	if(params.Role == "")
 		chanceOfGetting[0] = 100;
 	if (params.Role === "marksman")
@@ -211,6 +227,13 @@ function generateBotWeapon(params)
 // tier dependent loots
 function generateItemByPattern(itemType, Inventory, Role = "")
 {
+
+    if (Role === "pmcBot") {
+        presets = pmcPresets;
+    } else {
+        presets = botPresets;
+    }
+
 	let tier = calculateItemChance(presets[itemType], Role);
 	let len = presets[itemType][tier].length;
 	let randomize = ((len === 0)?0:utility.getRandomIntEx(len) - 1);
@@ -237,7 +260,7 @@ function generateItemByPattern(itemType, Inventory, Role = "")
 	if(itemType === "Backpack")
 	{
 		// generate inventory items randomly
-		Inventory = generateBotBackpackItem(Inventory,item);
+		Inventory = generateBotBackpackItem(Inventory, item, presets);
 	}
 	if(itemType === "Headwear")
 	{
@@ -269,7 +292,7 @@ function generateItemByPattern(itemType, Inventory, Role = "")
 }
 // helping functions \/\/\/
 function updCreator(itemParent, item)
-{
+{   //59f32bb586f774757e1e8442
 	if(item._tpl === "59f32c3b86f77472a31742f0"){
 		console.log("DOGTAG","","",true);
 	}
@@ -395,7 +418,7 @@ function getCompatibleAmmo(weapon)
 	return items.data[weapon._items[0]._tpl]._props.Chambers[0]._props.filters[0].Filter;
 }
 // helping functions /
-function generateBotBackpackItem(botInventory,backpack) 
+function generateBotBackpackItem(botInventory, backpack, presets) 
 {
 	// its work need to find out upd dependencies and adds them;
 	const backpackData = items.data[backpack._tpl]._props.Grids[0]._props;
@@ -470,7 +493,13 @@ return botInventory;
 }
 function generatePocketItem(pocketNum = 1, botType)
 { // determine which item will be added medicament or granade
-	
+    
+    if (botType === "pmcBot") {
+        presets = pmcPresets;
+    } else {
+        presets = botPresets;
+    }
+
 	if(utility.getRandomIntEx(100) < settings.bots.pocket.med_to_gra){ 
 		if(utility.getRandomIntEx(100) <= settings.bots.pocket.meds || botType === "followerBully")
 		{ // meds
@@ -728,66 +757,68 @@ function generateBaseBot(params)
 			bot.Info.Nickname = getRandomFullName() + "(M)";
 			bot = generateAppearance(bot, "sniper");
 			break;
-
+        // i did not remove the case "pmcBot" altought i dont think the game sends that type of request.
 		case "pmcBot":
 			bot.Info.Nickname = getRandomName("pmc");
 			bot = generateAppearance(bot, "raider");
 			break;
 		
 		default:
+            if (settings.bots.pmc.canSpawn || settings.bots.pmcWar.enabled) {
+                // if the random int is lower or equal the chance %, generate a PMC.
+                if (utility.getRandomIntEx(100) <= settings.bots.pmc.chance || settings.bots.pmcWar.enabled) {
+                    bot.Info.Nickname = getRandomName("pmc");
+                    bot = generateAppearance(bot, "raider");
+
+                    params.Role = "pmcBot";
+                    // Generate random level from 1 to 70.
+                    bot.Info.Level = utility.getRandomIntEx(70);
+
+                    // push a Dogtag containing bot name, level, and current player as killer. (would have to be changed if online mode is added).
+                    bot.Inventory.items.push({
+                        _id:  "dogtag_" + 100000000 + utility.getRandomIntEx(899999999),
+                        _tpl: "59f32bb586f774757e1e8442",
+                        parentId: bot.Inventory.equipment,
+                        slotId: "Dogtag",
+                        upd: {
+                            "Dogtag":{
+                                "Nickname": bot.Info.Nickname,
+                                "Side":"Usec",
+                                "Level": bot.Info.Level,
+                                "Time":"0001-01-01T00:00:00",
+                                "Status": "K.I.A",
+                                "KillerName": profile.getCurrentNickname(),
+                                "WeaponName": "Unknown"
+                            }
+                        }
+                    });
+
+                    pmcCount++;
+
+			        break;
+                }
+            }
+
 			bot.Info.Nickname = getRandomFullName();
 			bot = generateAppearance(bot);
 			break;
 	}
 
 	//BOTS CONSTANTS DEPENDING ON Role
-	if(Role === "pmcBot") 
-	{
-		settings.bots.equipment.backpack = 20; // force 20% backpack chance
-	}
-	if(Role === "followerBully")
-	{
+	/*if(params.Role === "pmcBot") {
+		//settings.bots.equipment.backpack = 20; // force 20% backpack chance. // IamN5: removed it because I dont see a reason to do that.
+	}else*/ if(params.Role === "followerBully") {
 		settings.bots.equipment.backpack = 100;
 	}
 	
 	// generate bot skill
 	bot = generateBotSkill(bot, params);
 
-	//{"_id":"5d5ee20446b16820305c188e","_tpl":"59f32bb586f774757e1e8442","parentId":"5cb0dd1946b16858856ddff0","slotId":"Dogtag","upd":{"Dogtag":{"Nickname":"","Side":"Bear","Level":1,"Time":"0001-01-01T00:00:00","Status":"","KillerName":"","WeaponName":""}}}
-	if (params.Role != "followerBully" && settings.bots.pmcWar.enabled == true) 
-	{ // generate PMC bot instead
-		if (utility.getRandomIntEx(100) <= settings.bots.pmcWar.sideUsec) 
-		{ 
-			bot = generateAppearance(bot, "usec");
-			bot.Info.Side = "Usec";
-			bot.Inventory.items.push({
-				_id:  "dogtag_" + 100000000 + utility.getRandomIntEx(899999999),
-				_tpl: "59f32bb586f774757e1e8442",
-				parentId: bot.Inventory.equipment,
-				slotId: "Dogtag",
-				upd: {"Dogtag":{"Nickname": bot.Info.Nickname,"Side":"Usec","Level": bot.Info.Level,"Time":"0001-01-01T00:00:00","Status":"","KillerName":"","WeaponName":""}}
-			});
-			
-			//add dogtag here
-		} 
-		else 
-		{
-			bot = generateAppearance(bot, "bear");
-			bot.Info.Side = "Bear";
-			bot.Inventory.items.push({
-				_id:  "dogtag_" + 100000000 + utility.getRandomIntEx(899999999),
-				_tpl: "59f32bb586f774757e1e8442",
-				parentId: bot.Inventory.equipment,
-				slotId: "Dogtag",
-				upd: {"Dogtag":{"Nickname": bot.Info.Nickname,"Side":"Bear","Level": bot.Info.Level,"Time":"0001-01-01T00:00:00","Status":"","KillerName":"","WeaponName":""}}
-			});
-		}
-	}
-
+    //IamN5: TODO Different presets for PMCs and Scavs.
 
 	// choose randomly a weapon from preset.json before filling items
 	var weapon = generateBotWeapon(params);
-	
+
 	// Tactical vest Assignation
 	let TacticalVest = generateItemByPattern("TacticalVest", bot.Inventory.items);
 	if(TacticalVest != {})
@@ -840,19 +871,20 @@ function generateBaseBot(params)
 	// chance to add a med pocket, bully followers have 100% chance
 	for(let i = 1; i <= 4; i++)
 	{// pockets fill up section
-		let pocketItem_tmp = generatePocketItem(i,params.Role);
+		let pocketItem_tmp = generatePocketItem(i, params.Role);
 		if(pocketItem_tmp != false)
 		{ // fill up if item was choosed
 			bot.Inventory.items.push(pocketItem_tmp);
 		}
-	}
+    }
 
 	return bot;
 }
 function generate(databots) {
-	//console.log(databots);
+	console.log(databots);
 	let generatedBots = [];
-	let botPossibilities = 0;
+    let botPossibilities = 0;
+    let pmc = 0;
 
 	// loop to generate all scavs
 	for (let params of databots.conditions) {
@@ -899,7 +931,6 @@ function generate(databots) {
 				case "bossBully":
 					generatedBots.push(generateBotBoss(params, "botBossBully"));
 					break;
-
 				default:
 					generatedBots.push(generateBaseBot(params));
 					break;
@@ -908,7 +939,10 @@ function generate(databots) {
 		}
 	}
 
-	console.log("[INFO][Finished Generating " + botPossibilities + " bots]","","",true);
+    console.log("[INFO][Finished Generating " + botPossibilities + " bots, " + pmcCount + " being PMCs.]","","",true);
+    
+    pmcCount = 0;
+
 	return generatedBots;
 }
 function generatePlayerScav() {

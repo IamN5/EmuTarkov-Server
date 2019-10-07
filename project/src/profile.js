@@ -245,6 +245,12 @@ function changeNickname(info) {
   );
 }
 
+function getCurrentNickname() {
+    let tmpList = getCharacterData();
+
+    return tmpList.data[1].Info.Nickname;
+}
+
 function changeVoice(info) {
   let tmpList = getCharacterData();
 
@@ -379,6 +385,7 @@ module.exports.getStashType = getStashType;
 module.exports.getActiveID = getActiveID;
 module.exports.setActiveID = setActiveID;
 module.exports.changeNickname = changeNickname;
+module.exports.getCurrentNickname = getCurrentNickname;
 module.exports.changeVoice = changeVoice;
 module.exports.find = find;
 module.exports.delete = remove;

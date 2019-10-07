@@ -17,6 +17,10 @@
 			"enabled": false,
 			"sideUsec": 50
 		},
+		"pmc": {
+			"canSpawn": true,
+			"chance": 30
+		},
 		"limit": {
 			"override": true,
 			"bossKilla": 1,
