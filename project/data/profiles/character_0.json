@@ -121,7 +121,7 @@
 					"isSearched": true
 				},
 				"upd": {
-					"StackObjectsCount": 9999995
+					"StackObjectsCount": 9979612
 				}
 			},
 			{
@@ -206,6 +206,106 @@
 					"y": 0,
 					"r": 0
 				},
+				"upd": {
+					"StackObjectsCount": 1
+				}
+			},
+			{
+				"_id": "1570460690424230112",
+				"_tpl": "59984ab886f7743e98271174",
+				"parentId": "5c6687d65e9d882c8841f0fd",
+				"slotId": "FirstPrimaryWeapon",
+				"upd": {
+					"StackObjectsCount": 1
+				}
+			},
+			{
+				"_id": "157046069015589533",
+				"_tpl": "5998517986f7746017232f7e",
+				"parentId": "1570460690424230112",
+				"slotId": "mod_pistol_grip",
+				"upd": {
+					"StackObjectsCount": 1
+				}
+			},
+			{
+				"_id": "1570460690231509009",
+				"_tpl": "599851db86f77467372f0a18",
+				"parentId": "1570460690424230112",
+				"slotId": "mod_stock",
+				"upd": {
+					"StackObjectsCount": 1
+				}
+			},
+			{
+				"_id": "1570460690304772551",
+				"_tpl": "599860ac86f77436b225ed1a",
+				"parentId": "1570460690424230112",
+				"slotId": "mod_magazine",
+				"upd": {
+					"StackObjectsCount": 1
+				}
+			},
+			{
+				"_id": "1570460690459890962",
+				"_tpl": "5998597786f77414ea6da093",
+				"parentId": "1570460690424230112",
+				"slotId": "mod_muzzle",
+				"upd": {
+					"StackObjectsCount": 1
+				}
+			},
+			{
+				"_id": "1570460690826212156",
+				"_tpl": "59985a8086f77414ec448d1a",
+				"parentId": "1570460690424230112",
+				"slotId": "mod_reciever",
+				"upd": {
+					"StackObjectsCount": 1
+				}
+			},
+			{
+				"_id": "1570460690841046862",
+				"_tpl": "599860e986f7743bb57573a6",
+				"parentId": "1570460690424230112",
+				"slotId": "mod_sight_rear",
+				"upd": {
+					"StackObjectsCount": 1
+				}
+			},
+			{
+				"_id": "1570460690404975818",
+				"_tpl": "59ccd11386f77428f24a488f",
+				"parentId": "1570460690424230112",
+				"slotId": "mod_gas_block",
+				"upd": {
+					"StackObjectsCount": 1
+				}
+			},
+			{
+				"_id": "1570460690203100623",
+				"_tpl": "5648b1504bdc2d9d488b4584",
+				"parentId": "1570460690404975818",
+				"slotId": "mod_handguard",
+				"upd": {
+					"StackObjectsCount": 1
+				}
+			},
+			{
+				"_id": "157046070414794867",
+				"_tpl": "56d59d3ad2720bdb418b4577",
+				"parentId": "1570460690304772551",
+				"slotId": "cartridges",
+				"location": 0,
+				"upd": {
+					"StackObjectsCount": 29
+				}
+			},
+			{
+				"_id": "1570460714134487756",
+				"_tpl": "56d59d3ad2720bdb418b4577",
+				"parentId": "1570460690424230112",
+				"slotId": "patron_in_weapon",
 				"upd": {
 					"StackObjectsCount": 1
 				}
@@ -1812,7 +1912,7 @@
 	],
 	"TraderStandings": {
 		"1_prapor": {
-			"currentSalesSum": 0,
+			"currentSalesSum": 20383,
 			"loyaltyLevels": {
 				"0": {
 					"minLevel": 1,

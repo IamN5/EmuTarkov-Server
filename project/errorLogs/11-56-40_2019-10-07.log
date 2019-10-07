@@ -1,0 +1,463 @@
+> JustEmuTarkov 0.7.4 RC.11  <
+> https://justemutarkov.github.io/  <
+> Starting listening on http://127.0.0.1:1337
+[INFO][IP>::ffff:192.168.1.115]<POST>[Profile:0][Req:/client/languages]
+{"crc":0}
+[INFO][IP>::ffff:192.168.1.115]<POST>[Profile:0][Req:/client/menu/locale/en]
+{"crc":0}
+[INFO][IP>::ffff:192.168.1.115]<POST>[Profile:0][Req:/client/game/version/validate]
+{"version":{"major":"0.11.7.4174","minor":"live","game":"live","backend":"6","taxonomy":"341"},"develop":true}
+[INFO][IP>::ffff:192.168.1.115]<POST>[Profile:0][Req:/client/game/login]
+{"email":"user0@jet.com","pass":"password","version":{"major":"0.11.7.4174","minor":"live","game":"live","backend":"6","taxonomy":"341"},"device_id":"6318147ec00ff8ffbad63814352c56f0","develop":true,"sec":1}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/items]
+{"crc":821122550}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/globals]
+{"crc":0}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/profile/list]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/weather]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/locations]
+{"crc":27341411}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/locale/en]
+{"crc":2863236201}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/profile/select]
+{"uid":"5c71b934354682353958e984"}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/profile/status]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/handbook/templates]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/quest/list]
+{"completed":true}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/notifier/channel/create]
+{}
+[INFO][IP>::ffff:127.0.0.1]<GET>[Req:/?last_id=default_id]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/profile/list]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/mail/dialog/list]
+{"limit":30,"offset":0}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/friend/list]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/friend/request/list/outbox]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/friend/request/list/inbox]
+{}
+{}
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/server/list]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTradersList]
+{}
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/notifier/channel/create]
+{}
+[INFO][IP>::ffff:127.0.0.1]<GET>[Req:/?last_id=default_id]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTrader/7_ragman]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTrader/4_skier]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTrader/2_therapist]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTrader/8_PresetTrader]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTrader/6_mechanic]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTrader/5_peacekeeper]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTrader/3_fence]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTrader/1_prapor]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTrader/92_SecretTrader]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTrader/91_everythingTrader]
+{}
+{}
+{}
+{}
+{}
+{}
+{}
+{}
+{}
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTraderAssort/1_prapor]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getUserAssortPrice/trader/1_prapor]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/profile/items/moving]
+{"data":[{"Action":"TradingConfirm","type":"buy_from_trader","tid":"1_prapor","item_id":"5cacc37588a4500dd046d746","count":1,"scheme_id":0,"scheme_items":[{"id":"1555817317657517113","count":18997}]}],"tm":1}
+Items taken. Status OK.
+Bought item: 5cacc37588a4500dd046d746
+[
+  [
+    1, 1, 1, 1, 1,
+    1, 0, 0, 0, 1
+  ],
+  [
+    0, 0, 1, 1, 1,
+    1, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    1, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ]
+]
+Item placed at position [6,0]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTraderAssort/1_prapor]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getUserAssortPrice/trader/1_prapor]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/profile/items/moving]
+{"data":[{"Action":"TradingConfirm","type":"buy_from_trader","tid":"1_prapor","item_id":"5cacc37688a4500dd046d767","count":30,"scheme_id":0,"scheme_items":[{"id":"1555817317657517113","count":1386}]}],"tm":1}
+Items taken. Status OK.
+Bought item: 5cacc37688a4500dd046d767
+[
+  [
+    1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1
+  ],
+  [
+    0, 0, 1, 1, 1,
+    1, 1, 1, 1, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    1, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ],
+  [
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+  ]
+]
+Item placed at position [0,1]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTraderAssort/1_prapor]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getUserAssortPrice/trader/1_prapor]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTrader/8_PresetTrader]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTrader/4_skier]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTrader/2_therapist]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTrader/6_mechanic]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTrader/3_fence]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTrader/1_prapor]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTrader/92_SecretTrader]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTrader/91_everythingTrader]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTrader/7_ragman]
+{}
+{}
+{}
+{}
+{}
+{}
+{}
+{}
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTrader/5_peacekeeper]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTrader/6_mechanic]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTrader/91_everythingTrader]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTrader/2_therapist]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTrader/1_prapor]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTrader/8_PresetTrader]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTrader/3_fence]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTrader/5_peacekeeper]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTrader/92_SecretTrader]
+{}
+{}
+{}
+{}
+{}
+{}
+{}
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTrader/7_ragman]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTrader/4_skier]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/profile/items/moving]
+{"data":[{"Action":"Split","item":"157046070414794867","container":{"id":"1570460690424230112","container":"patron_in_weapon"},"count":1}],"tm":1}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/profile/items/moving]
+{"data":[{"Action":"Move","item":"1570460690424230112","to":{"id":"5c6687d65e9d882c8841f0fc","container":"hideout","location":{"x":0,"y":4,"r":"Horizontal","isSearched":true}}},{"Action":"Move","item":"1570460690304772551","to":{"id":"5c6687d65e9d882c8841f0fc","container":"hideout","location":{"x":3,"y":8,"r":"Horizontal","isSearched":true}}},{"Action":"Move","item":"157046070414794867","to":{"id":"1570460690304772551","container":"cartridges"}},{"Action":"Move","item":"1570460690304772551","to":{"id":"1570460690424230112","container":"mod_magazine"}},{"Action":"Move","item":"1570460690424230112","to":{"id":"5c6687d65e9d882c8841f0fd","container":"FirstPrimaryWeapon"}}],"tm":1}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/notifier/channel/create]
+{}
+[INFO][IP>::ffff:127.0.0.1]<GET>[Req:/?last_id=default_id]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:192.168.1.115]<POST>[Profile:0][Req:/client/languages]
+{"crc":0}
+[INFO][IP>::ffff:192.168.1.115]<POST>[Profile:0][Req:/client/menu/locale/en]
+{"crc":0}
+[INFO][IP>::ffff:192.168.1.115]<POST>[Profile:0][Req:/client/game/version/validate]
+{"version":{"major":"0.11.7.4174","minor":"live","game":"live","backend":"6","taxonomy":"341"},"develop":true}
+[INFO][IP>::ffff:192.168.1.115]<POST>[Profile:0][Req:/client/game/login]
+{"email":"user0@jet.com","pass":"password","version":{"major":"0.11.7.4174","minor":"live","game":"live","backend":"6","taxonomy":"341"},"device_id":"6318147ec00ff8ffbad63814352c56f0","develop":true,"sec":1}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/items]
+{"crc":821122550}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/globals]
+{"crc":0}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/profile/list]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/weather]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/locations]
+{"crc":27341411}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/locale/en]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/profile/select]
+{"crc":2863236201}
+{"uid":"5c71b934354682353958e984"}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/profile/status]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/handbook/templates]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/quest/list]
+{"completed":true}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/notifier/channel/create]
+{}
+[INFO][IP>::ffff:127.0.0.1]<GET>[Req:/?last_id=default_id]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/profile/list]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/mail/dialog/list]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/friend/list]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/friend/request/list/inbox]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/friend/request/list/outbox]
+{"limit":30,"offset":0}
+{}
+{}
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/server/list]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTradersList]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/match/group/looking/stop]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/match/group/status]
+{"location":"bigmap","savage":false,"dt":"CURR","keyId":""}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/match/group/exit_from_menu]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/notifier/channel/create]
+{}
+[INFO][IP>::ffff:127.0.0.1]<GET>[Req:/?last_id=default_id]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<GET>[Req:/?last_id=default_id]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/bot/generate]
+{"conditions":[{"Role":"assault","Limit":30,"Difficulty":"easy"},{"Role":"marksman","Limit":30,"Difficulty":"normal"},{"Role":"marksman","Limit":30,"Difficulty":"easy"},{"Role":"assault","Limit":30,"Difficulty":"normal"},{"Role":"marksman","Limit":30,"Difficulty":"hard"},{"Role":"assault","Limit":30,"Difficulty":"hard"}]}
+{
+  conditions: [
+    { Role: 'assault', Limit: 30, Difficulty: 'easy' },
+    { Role: 'marksman', Limit: 30, Difficulty: 'normal' },
+    { Role: 'marksman', Limit: 30, Difficulty: 'easy' },
+    { Role: 'assault', Limit: 30, Difficulty: 'normal' },
+    { Role: 'marksman', Limit: 30, Difficulty: 'hard' },
+    { Role: 'assault', Limit: 30, Difficulty: 'hard' }
+  ]
+}
+SERVER CRASHED!
+[ERROR] - Start displaying
+ReferenceError: presets is not defined
+    at generateAppearance (N:\Coding\Escape from Tarkov\EmuTarkov-Server\project\src\bots.js:72:13)
+    at generateBaseBot (N:\Coding\Escape from Tarkov\EmuTarkov-Server\project\src\bots.js:771:27)
+    at Object.generate (N:\Coding\Escape from Tarkov\EmuTarkov-Server\project\src\bots.js:935:25)
+    at Object.get (N:\Coding\Escape from Tarkov\EmuTarkov-Server\project\src\response.js:225:67)
+    at sendResponse (N:\Coding\Escape from Tarkov\EmuTarkov-Server\project\src\server.js:202:22)
+    at Inflate.cb (N:\Coding\Escape from Tarkov\EmuTarkov-Server\project\src\server.js:285:6)
+    at Inflate.zlibBufferOnEnd (zlib.js:139:10)
+    at Inflate.emit (events.js:208:15)
+    at endReadableNT (_stream_readable.js:1168:12)
+    at processTicksAndRejections (internal/process/task_queues.js:77:11)
+[ERROR] - Ends displaying
+[INFO] - opening error logs folder
+[KILLING PROCESS]

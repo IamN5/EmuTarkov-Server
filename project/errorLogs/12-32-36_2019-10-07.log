@@ -1,0 +1,153 @@
+> JustEmuTarkov 0.7.4 RC.11  <
+> https://justemutarkov.github.io/  <
+> Starting listening on http://127.0.0.1:1337
+[INFO][IP>::ffff:192.168.1.115]<POST>[Profile:0][Req:/client/languages]
+{"crc":0}
+[INFO][IP>::ffff:192.168.1.115]<POST>[Profile:0][Req:/client/menu/locale/en]
+{"crc":0}
+[INFO][IP>::ffff:192.168.1.115]<POST>[Profile:0][Req:/client/game/version/validate]
+{"version":{"major":"0.11.7.4174","minor":"live","game":"live","backend":"6","taxonomy":"341"},"develop":true}
+[INFO][IP>::ffff:192.168.1.115]<POST>[Profile:0][Req:/client/game/login]
+{"email":"user0@jet.com","pass":"password","version":{"major":"0.11.7.4174","minor":"live","game":"live","backend":"6","taxonomy":"341"},"device_id":"6318147ec00ff8ffbad63814352c56f0","develop":true,"sec":1}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/items]
+{"crc":821122550}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/globals]
+{"crc":0}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/profile/list]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/weather]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/locations]
+{"crc":27341411}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/profile/select]
+{"uid":"5c71b934354682353958e984"}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/locale/en]
+{"crc":2863236201}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/profile/status]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/handbook/templates]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/quest/list]
+{"completed":true}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/notifier/channel/create]
+{}
+[INFO][IP>::ffff:127.0.0.1]<GET>[Req:/?last_id=default_id]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/profile/list]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/mail/dialog/list]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/friend/list]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/friend/request/list/inbox]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/friend/request/list/outbox]
+{"limit":30,"offset":0}
+{}
+{}
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/trading/api/getTradersList]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/server/list]
+{}
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<GET>[Req:/?last_id=default_id]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/bot/generate]
+{"conditions":[{"Role":"assault","Limit":30,"Difficulty":"easy"},{"Role":"assault","Limit":30,"Difficulty":"normal"},{"Role":"marksman","Limit":30,"Difficulty":"normal"},{"Role":"marksman","Limit":30,"Difficulty":"easy"},{"Role":"marksman","Limit":30,"Difficulty":"hard"},{"Role":"assault","Limit":30,"Difficulty":"hard"}]}
+{
+  conditions: [
+    { Role: 'assault', Limit: 30, Difficulty: 'easy' },
+    { Role: 'assault', Limit: 30, Difficulty: 'normal' },
+    { Role: 'marksman', Limit: 30, Difficulty: 'normal' },
+    { Role: 'marksman', Limit: 30, Difficulty: 'easy' },
+    { Role: 'marksman', Limit: 30, Difficulty: 'hard' },
+    { Role: 'assault', Limit: 30, Difficulty: 'hard' }
+  ]
+}
+[INFO][Finished Generating 120 bots, 3 being PMCs.]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/bot/generate?retry=1]
+{"conditions":[{"Role":"assault","Limit":30,"Difficulty":"easy"},{"Role":"assault","Limit":30,"Difficulty":"normal"},{"Role":"marksman","Limit":30,"Difficulty":"normal"},{"Role":"marksman","Limit":30,"Difficulty":"easy"},{"Role":"marksman","Limit":30,"Difficulty":"hard"},{"Role":"assault","Limit":30,"Difficulty":"hard"}]}
+{
+  conditions: [
+    { Role: 'assault', Limit: 30, Difficulty: 'easy' },
+    { Role: 'assault', Limit: 30, Difficulty: 'normal' },
+    { Role: 'marksman', Limit: 30, Difficulty: 'normal' },
+    { Role: 'marksman', Limit: 30, Difficulty: 'easy' },
+    { Role: 'marksman', Limit: 30, Difficulty: 'hard' },
+    { Role: 'assault', Limit: 30, Difficulty: 'hard' }
+  ]
+}
+[INFO][Finished Generating 120 bots, 3 being PMCs.]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/bot/generate?retry=2]
+{"conditions":[{"Role":"assault","Limit":30,"Difficulty":"easy"},{"Role":"assault","Limit":30,"Difficulty":"normal"},{"Role":"marksman","Limit":30,"Difficulty":"normal"},{"Role":"marksman","Limit":30,"Difficulty":"easy"},{"Role":"marksman","Limit":30,"Difficulty":"hard"},{"Role":"assault","Limit":30,"Difficulty":"hard"}]}
+{
+  conditions: [
+    { Role: 'assault', Limit: 30, Difficulty: 'easy' },
+    { Role: 'assault', Limit: 30, Difficulty: 'normal' },
+    { Role: 'marksman', Limit: 30, Difficulty: 'normal' },
+    { Role: 'marksman', Limit: 30, Difficulty: 'easy' },
+    { Role: 'marksman', Limit: 30, Difficulty: 'hard' },
+    { Role: 'assault', Limit: 30, Difficulty: 'hard' }
+  ]
+}
+[INFO][Finished Generating 120 bots, 3 being PMCs.]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/bot/generate?retry=3]
+{"conditions":[{"Role":"assault","Limit":30,"Difficulty":"easy"},{"Role":"assault","Limit":30,"Difficulty":"normal"},{"Role":"marksman","Limit":30,"Difficulty":"normal"},{"Role":"marksman","Limit":30,"Difficulty":"easy"},{"Role":"marksman","Limit":30,"Difficulty":"hard"},{"Role":"assault","Limit":30,"Difficulty":"hard"}]}
+{
+  conditions: [
+    { Role: 'assault', Limit: 30, Difficulty: 'easy' },
+    { Role: 'assault', Limit: 30, Difficulty: 'normal' },
+    { Role: 'marksman', Limit: 30, Difficulty: 'normal' },
+    { Role: 'marksman', Limit: 30, Difficulty: 'easy' },
+    { Role: 'marksman', Limit: 30, Difficulty: 'hard' },
+    { Role: 'assault', Limit: 30, Difficulty: 'hard' }
+  ]
+}
+[INFO][Finished Generating 120 bots, 3 being PMCs.]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/notifier/channel/create]
+{}
+[INFO][IP>::ffff:127.0.0.1]<GET>[Req:/?last_id=default_id]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/notifier/channel/create]
+{}
+[INFO][IP>::ffff:127.0.0.1]<GET>[Req:/?last_id=default_id]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/notifier/channel/create]
+{}
+[INFO][IP>::ffff:127.0.0.1]<GET>[Req:/?last_id=default_id]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/notifier/channel/create]
+{}
+[INFO][IP>::ffff:127.0.0.1]<GET>[Req:/?last_id=default_id]
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}
+[INFO][IP>::ffff:127.0.0.1]<POST>[Profile:0][Req:/client/game/keepalive]
+{}

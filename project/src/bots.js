@@ -69,7 +69,7 @@ function generateAppearance(bot, type = "")
 	let head; let body; let feet;
     let rng_voice = 0; let botName = "";
     
-    presets = botPresets;
+    let presets = botPresets;
 	
 	switch(type)
 	{
@@ -151,12 +151,14 @@ function generateBotWeapon(params)
 	//randomize Mainweapon and hostler weapon rolling if there should we (main weapon and postol) / (pistol) or (mainweapin only)
     const chanceOfGetting = [settings.bots.weapon.main, settings.bots.weapon.secondary];
 
+    
     // decides which set of presets to use.
+    let presets = botPresets;
+    let weaponPresets = botWeaponPresets;
     if (params.Role === "pmcBot") {
         presets = pmcPresets;
-    } else {
-        presets = botPresets;
-    }
+        weaponPresets = pmcWeaponPresets;
+    } 
     
 	if(params.Role == "")
 		chanceOfGetting[0] = 100;
@@ -228,11 +230,10 @@ function generateBotWeapon(params)
 function generateItemByPattern(itemType, Inventory, Role = "")
 {
 
+    let presets = botPresets;
     if (Role === "pmcBot") {
         presets = pmcPresets;
-    } else {
-        presets = botPresets;
-    }
+    } 
 
 	let tier = calculateItemChance(presets[itemType], Role);
 	let len = presets[itemType][tier].length;
@@ -494,11 +495,10 @@ return botInventory;
 function generatePocketItem(pocketNum = 1, botType)
 { // determine which item will be added medicament or granade
     
+    let presets = botPresets;
     if (botType === "pmcBot") {
         presets = pmcPresets;
-    } else {
-        presets = botPresets;
-    }
+    } 
 
 	if(utility.getRandomIntEx(100) < settings.bots.pocket.med_to_gra){ 
 		if(utility.getRandomIntEx(100) <= settings.bots.pocket.meds || botType === "followerBully")
